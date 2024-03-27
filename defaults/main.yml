@@ -11,5 +11,5 @@ default_ipv6: "dhcp"       # Default IPv6 setting
 vm_network_vlan: 10       # Default VLAN tag
 default_bridge: "vmbr0"
 preferred_storage_type: 'zfs'  # Preferred storage type, e.g., 'zfs', 'lvm', 'iscsi'
-proxmox_api_url: "https://pve4.linuxhardcore.com/api2/json" # Proxmox API URL
+proxmox_api_url: "https://pve4.linuxhardcore.com:8006/api2/json" # Proxmox API URL
 default_domain_name: "linuxhardcore.com"
