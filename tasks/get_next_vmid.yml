@@ -6,7 +6,7 @@
     headers:
       Authorization: "PVEAPIToken={{ proxmox_api_token_id }}={{ proxmox_api_token_secret }}"
     return_content: yes
-    validate_certs: no  # Change to yes in production environments
+    validate_certs: no  # Adjust for production
   register: next_vmid_result
   when: item.vmid is not defined or item.vmid == ''
   loop: "{{ vms }}"
@@ -14,9 +14,14 @@
     loop_var: item
   delegate_to: localhost
 
+- name: Debug next VMID API response
+  debug:
+    var: next_vmid_result
+
 - name: Set VMID from API if not already provided
   set_fact:
-    vms: "{{ vms | map('combine', {'vmid': (item.vmid | default(next_vmid_result.results[loop.index0].json.data))}) | list }}"
+    vms: "{{ vms | map('combine', {'vmid': (item.vmid | default(next_vmid_result.json.data))}) | list }}"
   loop: "{{ vms }}"
   loop_control:
     loop_var: item
+  
