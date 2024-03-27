@@ -40,7 +40,7 @@ Include the role in your playbook and define the necessary variables:
 - hosts: localhost
   gather_facts: no
   roles:
-    - my_proxmox_vm_role
+    - ansible-role-proxmox-vm-from-template
   vars:
     vms:
       - name: "webserver"
@@ -59,7 +59,7 @@ Deploying a single VM using defaults but with specific memory size and a custom 
 ```yaml
 - hosts: localhost
   roles:
-    - my_proxmox_vm_role
+    - ansible-role-proxmox-vm-from-template
   vars:
     vms:
       - name: "dbserver"
@@ -72,7 +72,7 @@ Deploying multiple VMs with different configurations:
 ```yaml
 - hosts: localhost
   roles:
-    - my_proxmox_vm_role
+    - ansible-role-proxmox-vm-from-template
   vars:
     vms:
       - name: "appserver"
@@ -88,8 +88,8 @@ Deploying multiple VMs with different configurations:
 
 ## License:
 
-Specify your license or state that the project is unlicensed.
+MIT License
 
 ## Author Information:
 
-This role was created by [Your Name].
+This role was created by Chat GPT and Philip S. Hempel.
