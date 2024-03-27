@@ -1,44 +1,95 @@
-Build VM on Proxmox from a Cloud init Template
-=========
 
-1. Pull hosts from the Proxmox cluster, get the next VM id
-2. Get template name based on tag and deploy i.e. OS Debian Ubuntu or other.
-3. Determine which host has most free memory and cpu. Memory is our main concern
-4. Determine what storage to use based on the most free space.
-5. Options to pass as vendor to cloud init extra, just in case we need something that needs to be done prior to system up
-6. Send build options such as VLAN, Storage, Disk size, Memory of VM. Server must use UEFI. We will enable IPV4 and IPV6 DHCP
-7. Send build request to the correct host. If the template we want is not on a host migrate that template and deploy 
+# Ansible Role: Proxmox VM Deployer
 
-Requirements
-------------
+This Ansible role facilitates the automated deployment and configuration of virtual machines (VMs) on a Proxmox Virtual Environment (PVE) cluster. It is designed to streamline and standardize the process of VM creation, allowing for both detailed customization and quick setup with sensible defaults.
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+## Features:
 
-Role Variables
---------------
+- **Dynamic VM Placement**: Automatically selects the Proxmox node with the most available resources (memory and CPU) for new VMs.
+- **Template-Based Deployment**: Allows for VM creation based on specified templates, facilitating standardization and rapid deployment.
+- **Flexible Networking**: Supports custom network configurations, including the choice of bridge interfaces and VLAN tagging.
+- **Customizable VM Parameters**: Configure VM settings such as memory size, number of CPU cores, and disk size, with the ability to set defaults or specify per VM.
+- **Optional VMID Specification**: Automatically uses the next available VMID or allows for manual specification.
+- **Cloud-Init Integration**: Supports cloud-init for additional VM configuration upon boot, such as setting user credentials and running custom scripts.
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+## Requirements:
 
-Dependencies
-------------
+- Ansible 2.9 or higher.
+- Access to a Proxmox VE cluster with necessary privileges.
+- Proxmox API tokens for authentication with appropriate permissions.
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+## Role Variables:
 
-Example Playbook
-----------------
+Variables can be defined in the `defaults/main.yml` for global defaults or overridden for specific VMs in the playbook:
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+```yaml
+default_memory_size: 2048  # Default VM memory size in MB
+default_disk_size: "30G"   # Default VM disk size
+default_cpu_cores: 2       # Default number of CPU cores per VM
+default_domain_name: "example.com"  # Default domain name for VMs
+default_bridge: "vmbr0"    # Default network bridge
+```
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+More detailed configurations and examples can be found in the `defaults/main.yml` file.
 
-License
--------
+## Usage:
 
-BSD
+Include the role in your playbook and define the necessary variables:
 
-Author Information
-------------------
+```yaml
+- hosts: localhost
+  gather_facts: no
+  roles:
+    - my_proxmox_vm_role
+  vars:
+    vms:
+      - name: "webserver"
+        node: "auto"  # Use 'auto' for dynamic node selection
+        memory: 4096
+        disk_size: "50G"
+        template_tag: "Ubuntu 20.04"
+        ipv4: "192.168.1.10"
+        vm_network_vlan: 100
+```
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+## Examples:
+
+Deploying a single VM using defaults but with specific memory size and a custom template:
+
+```yaml
+- hosts: localhost
+  roles:
+    - my_proxmox_vm_role
+  vars:
+    vms:
+      - name: "dbserver"
+        template_tag: "Debian 10"
+        memory: 8192
+```
+
+Deploying multiple VMs with different configurations:
+
+```yaml
+- hosts: localhost
+  roles:
+    - my_proxmox_vm_role
+  vars:
+    vms:
+      - name: "appserver"
+        template_tag: "Ubuntu 20.04"
+        memory: 4096
+        cores: 4
+        vm_network_vlan: 200
+      - name: "testserver"
+        template_tag: "CentOS 8"
+        memory: 2048
+        vmid: 150  # Specify VMID directly
+```
+
+## License:
+
+Specify your license or state that the project is unlicensed.
+
+## Author Information:
+
+This role was created by [Your Name].

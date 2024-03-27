@@ -18,6 +18,9 @@
       firewall=1
       {{ ',ip=' + item.ipv4 | default(default_ipv4) if item.ipv4 | default(default_ipv4) != 'none' else '' }}
       {{ ',ip6=' + item.ipv6 | default(default_ipv6) if item.ipv6 | default(default_ipv6) != 'none' else '' }}
+    clone: "{{ item.template_vmid }}"  # Assumes template VMID is determined beforehand
+    full_clone: true  # Set to true if you want a full clone, false for linked clone
   loop: "{{ vms }}"
   loop_control:
     loop_var: item
+  when: item.state | default('present') == 'present'  # Only deploy if the desired state is 'present'

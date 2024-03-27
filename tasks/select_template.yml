@@ -1,0 +1,18 @@
+---
+- name: Fetch available VM templates
+  uri:
+    url: "{{ proxmox_api_url }}/cluster/resources?type=vm"
+    method: GET
+    headers:
+      Authorization: "PVEAPIToken={{ proxmox_api_token_id }}={{ proxmox_api_token_secret }}"
+    return_content: yes
+    validate_certs: no  # Adjust in production
+  register: templates
+  delegate_to: localhost
+
+- name: Select VM template based on tag
+  set_fact:
+    vm_template: "{{ (templates.json.data | selectattr('tags', 'search', item.template_tag | default(default_template_tag)) | first).vmid }}"
+  loop: "{{ vms }}"
+  loop_control:
+    loop_var: item
