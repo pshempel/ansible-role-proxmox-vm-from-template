@@ -10,9 +10,20 @@
   delegate_to: localhost
   register: node_info
 
+# Calculate free memory for each node
+- name: Calculate free memory for each node
+  set_fact:
+    nodes_with_free_mem: "{{ nodes_with_free_mem | default([]) + 
+                              [{ 'node': item.node, 
+                                 'mem_free': item.maxmem - item.mem,
+                                 'maxcpu': item.maxcpu,
+                                 'maxdisk': item.maxdisk }] }}"
+  loop: "{{ node_info.json.data }}"
+  when: item.type == 'node'  # Ensure we're only dealing with node objects
+
 - name: Sort nodes by available memory
   set_fact:
-    sorted_nodes: "{{ node_info.json.data | sort(attribute='mem_free', reverse=true) | map(attribute='node') | list }}"
+    sorted_nodes: "{{ nodes_with_free_mem | sort(attribute='mem_free', reverse=true) | map(attribute='node') | list }}"
 
 - name: Fetch storage information for each node
   uri:
