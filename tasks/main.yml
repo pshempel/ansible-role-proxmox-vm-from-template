@@ -1,6 +1,17 @@
 ---
-# Main tasks for Proxmox VM deployment
-- import_tasks: prepare.yml
-- import_tasks: get_next_vmid.yml
-- import_tasks: select_template.yml
-- import_tasks: deploy_vms.yml
+# Include initial preparation tasks
+- name: Prepare environment and gather necessary information
+  import_tasks: prepare.yml
+
+# Check and set the VMID for each VM as needed
+- name: Ensure each VM has a VMID
+  import_tasks: get_next_vmid.yml
+
+# Optionally, include other task files as needed for your role
+# For example, selecting the template based on provided criteria
+- name: Select the appropriate template for VMs
+  import_tasks: select_template.yml
+
+# Finally, deploy the VMs based on the prepared configurations
+- name: Deploy VMs from the selected templates
+  import_tasks: deploy_vms.yml

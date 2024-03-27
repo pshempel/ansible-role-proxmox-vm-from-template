@@ -12,7 +12,8 @@
 
 - name: Select VM template based on tag
   set_fact:
-    vm_template: "{{ (templates.json.data | selectattr('tags', 'search', item.template_tag | default(default_template_tag)) | first).vmid }}"
+    set_fact:
+    selected_template: "{{ templates | selectattr('tags', 'defined') | selectattr('tags', 'search', vm_item.template_tag | default('default_tag')) | first }}"
   loop: "{{ vms }}"
   loop_control:
     loop_var: item
