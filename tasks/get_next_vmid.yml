@@ -1,0 +1,22 @@
+---
+- name: Get next available VMID if not explicitly provided
+  uri:
+    url: "{{ proxmox_api_url }}/cluster/nextid"
+    method: GET
+    headers:
+      Authorization: "PVEAPIToken={{ proxmox_api_token_id }}={{ proxmox_api_token_secret }}"
+    validate_certs: no
+    return_content: yes
+  register: next_vmid_result
+  when: item.vmid is not defined or item.vmid == ''
+  delegate_to: localhost
+  loop: "{{ vms }}"
+  loop_control:
+    loop_var: item
+
+- name: Set VMID from API if not already provided
+  set_fact:
+    vms: "{{ vms | map('combine', {'vmid': (item.vmid | default(next_vmid_result.results[loop.index0].json.data))}) | list }}"
+  loop: "{{ vms }}"
+  loop_control:
+    loop_var: item
