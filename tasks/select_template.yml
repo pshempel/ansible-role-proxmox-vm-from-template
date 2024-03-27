@@ -10,10 +10,15 @@
   register: templates
   delegate_to: localhost
 
-- name: Select VM template based on tag
+
+- name: Debug template information
+  debug:
+    var: templates  # or whatever variable you're using that should contain 'tags'
+
+- name: Select VM template based on tag and ensure it is a VM type
   set_fact:
-    set_fact:
-    selected_template: "{{ templates | selectattr('tags', 'defined') | selectattr('tags', 'search', vm_item.template_tag | default('default_tag')) | first }}"
+    selected_template: "{{ (templates | selectattr('type', 'equalto', 'qemu') | selectattr('tags', 'defined') | selectattr('tags', 'search', vm_item.template_tag | default('default_tag')) | list | first) | default('default_template_id') }}"
+
   loop: "{{ vms }}"
   loop_control:
     loop_var: item
