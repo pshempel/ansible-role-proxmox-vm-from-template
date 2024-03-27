@@ -1,7 +1,13 @@
-Role Name
+Build VM on Proxmox from a Cloud init Template
 =========
 
-A brief description of the role goes here.
+1. Pull hosts from the Proxmox cluster, get the next VM id
+2. Get template name based on tag and deploy i.e. OS Debian Ubuntu or other.
+3. Determine which host has most free memory and cpu. Memory is our main concern
+4. Determine what storage to use based on the most free space.
+5. Options to pass as vendor to cloud init extra, just in case we need something that needs to be done prior to system up
+6. Send build options such as VLAN, Storage, Disk size, Memory of VM. Server must use UEFI. We will enable IPV4 and IPV6 DHCP
+7. Send build request to the correct host. If the template we want is not on a host migrate that template and deploy 
 
 Requirements
 ------------

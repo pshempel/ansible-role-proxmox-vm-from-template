@@ -1,0 +1,24 @@
+users:
+  - name: ansible
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+    groups: sudo
+    shell: /bin/bash
+    ssh_authorized_keys:
+      - {{ ansible_ssh_public_key }}
+
+package_update: true
+package_upgrade: true
+packages:
+  - python3
+  - ssh
+
+runcmd:
+  - [ systemctl, restart, ssh ]
+
+# Set up Python to be available as 'python'
+write_files:
+  - path: /etc/profile.d/alias_python.sh
+    content: |
+      alias python=/usr/bin/python3
+
+final_message: "The system is finally up, after $UPTIME seconds"

@@ -1,0 +1,34 @@
+---
+- name: Fetch cluster node information
+  uri:
+    url: "{{ proxmox_api_url }}/cluster/resources?type=node"
+    method: GET
+    headers:
+      Authorization: "PVEAPIToken={{ proxmox_api_token_id }}={{ proxmox_api_token_secret }}"
+    return_content: yes
+    validate_certs: no  # Change to yes in production
+  delegate_to: localhost
+  register: node_info
+
+- name: Sort nodes by available memory
+  set_fact:
+    sorted_nodes: "{{ node_info.json.data | sort(attribute='mem_free', reverse=true) | map(attribute='node') | list }}"
+
+- name: Fetch storage information for each node
+  uri:
+    url: "{{ proxmox_api_url }}/nodes/{{ item }}/storage"
+    method: GET
+    headers:
+      Authorization: "PVEAPIToken={{ proxmox_api_token_id }}={{ proxmox_api_token_secret }}"
+    return_content: yes
+  loop: "{{ sorted_nodes }}"
+  register: storage_info
+  delegate_to: localhost
+
+- name: Filter and sort storages by preferred type and available space
+  set_fact:
+    preferred_storages: "{{ storage_info.results | map(attribute='json.data') | flatten | selectattr('type', 'equalto', preferred_storage_type) | sort(attribute='avail', reverse=true) }}"
+
+- name: Determine the best storage considering preferred type
+  set_fact:
+    best_storage: "{{ preferred_storages | first | default(storage_info.results | map(attribute='json.data') | flatten | sort(attribute='avail', reverse=true) | first) }}"

@@ -1,2 +1,4 @@
 ---
-# tasks file for ansible-role-proxmox-vm-from-template
+# Main tasks for Proxmox VM deployment
+- import_tasks: prepare.yml
+- import_tasks: deploy_vm.yml

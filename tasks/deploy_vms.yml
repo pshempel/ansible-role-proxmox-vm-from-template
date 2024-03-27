@@ -1,0 +1,25 @@
+---
+- name: Deploy VMs on Proxmox
+  community.general.proxmox_kvm:
+    api_user: "{{ proxmox_api_token_id.split('!')[0] }}"
+    api_token_id: "{{ proxmox_api_token_id.split('!')[1] }}"
+    api_token_secret: "{{ proxmox_api_token_secret }}"
+    api_host: "{{ proxmox_api_host }}"
+    node: "{{ vm.pinned_host | default(sorted_nodes | first) }}"
+    vmid: "{{ vm.vmid }}"
+    name: "{{ vm.name }}.{{ default_domain_name }}"  # Append domain name here
+    storage: "{{ vm.vm_storage | default(best_storage.storage) }}"
+    memory: "{{ vm.memory | default(default_memory_size) }}"
+    cores: "{{ vm.cores | default(default_cpu_cores) }}"
+    sockets: "{{ vm.sockets | default(default_cpu_sockets) }}"
+    disk: "{{ vm.disk_size | default(default_disk_size) }}"
+    onboot: "{{ vm.boot_on_start | default(default_boot_on_start) }}"
+    net: >-
+      net0=model=virtio,bridge=vmbr0
+      {{ ',tag=' + vm.vm_network_vlan | default(vm_network_vlan) if vm.vm_network_vlan | default(vm_network_vlan) != 'none' else '' }},
+      firewall=1
+      {{ ',ip=' + vm.ipv4 | default(default_ipv4) if vm.ipv4 | default(default_ipv4) != 'none' else '' }}
+      {{ ',ip6=' + vm.ipv6 | default(default_ipv6) if vm.ipv6 | default(default_ipv6) != 'none' else '' }}
+  loop: "{{ vms }}"
+  loop_control:
+    loop_var: vm
