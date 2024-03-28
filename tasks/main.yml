@@ -1,17 +1,39 @@
 ---
-# Include initial preparation tasks
+# Initial preparation and information gathering
 - name: Prepare environment and gather necessary information
   import_tasks: prepare.yml
 
-# Check and set the VMID for each VM as needed
+# Verifying and selecting the desired template based on a tag or criterion
+- name: Verify and select the desired template exists
+  import_tasks: verify_template_exists.yml
+  vars:
+    template_tag: "{{ default_template_tag }}"
+
+# Pick the correct template for cloning
+- name: Select the template
+  import_tasks: select_template.yml
+  
+- name: Check if the template is on the target node and set migration flag
+  import_tasks: check_template_location.yml
+
+- name: Migrate the template if necessary
+  import_tasks: migrate_template_to_target_node.yml
+  when: needs_migration
+
+# Ensuring each VM has a unique VMID assigned
 - name: Ensure each VM has a VMID
   import_tasks: get_next_vmid.yml
+  vars:
+    template_tag: "{{ default_template_tag }}"
 
-# Optionally, include other task files as needed for your role
-# For example, selecting the template based on provided criteria
-- name: Select the appropriate template for VMs
-  import_tasks: select_template.yml
+# Cloning VMs from the selected and verified template using include_tasks for dynamic execution
+- name: Clone a new VM from the template
+  include_tasks: clone_vm_from_template.yml
+  loop: "{{ vms }}"
+  loop_control:
+    loop_var: my_custom_item_var
+  when: my_custom_item_var.state | default('present') == 'present'
 
-# Finally, deploy the VMs based on the prepared configurations
-- name: Deploy VMs from the selected templates
-  import_tasks: deploy_vms.yml
+# Applying additional configurations to the newly cloned VMs
+- name: Configure deployed VMs
+  import_tasks: configure_vms.yml

@@ -1,0 +1,18 @@
+---
+- name: Fetch all VMs and templates from Proxmox
+  uri:
+    url: "{{ proxmox_api_url }}/cluster/resources?type=vm"
+    method: GET
+    headers:
+      Authorization: "PVEAPIToken={{ proxmox_api_token_id }}={{ proxmox_api_token_secret }}"
+    validate_certs: no  # Adjust in production environments
+    return_content: yes
+  register: vm_info
+  delegate_to: localhost
+
+- name: Verify if the desired template exists
+  assert:
+    that:
+      - vm_info.json.data | json_query("[?type=='qemu' && template==`1` && tags.contains(@, `{{ template_tag }}`)]") | length > 0
+    fail_msg: "Template with tag '{{ template_tag }}' does not exist."
+    success_msg: "Template with tag '{{ template_tag }}' found."

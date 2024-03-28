@@ -1,0 +1,34 @@
+---
+- name: Debug selected_template_vmid
+  debug:
+    msg: "Cloning from template VMID: {{ selected_template_vmid }}"
+
+- name: Debug new VMID and Name
+  debug:
+    msg: "Creating cloned VMID {{ selected_template_vmid }} with new ID {{ my_custom_item_var.vmid }}
+     and name {{ my_custom_item_var.name }}.{{ default_domain_name }}
+     on node {{ target_node }} on storage {{ best_storage.storage }} 
+     state for this vm is {{ my_custom_item_var.state }}"
+
+- name: Clone VM from template on Proxmox
+  community.general.proxmox_kvm:
+    api_user: "{{ proxmox_api_token_id.split('!')[0] }}"
+    api_token_id: "{{ proxmox_api_token_id.split('!')[1] }}"
+    api_token_secret: "{{ proxmox_api_token_secret }}"
+    api_host: "{{ proxmox_api_host }}"
+    node: "{{ target_node }}"
+    # vmid: "{{ my_custom_item_var.vmid }}"
+    vmid: "{{ selected_template_vmid }}"
+    newid: "{{ my_custom_item_var.vmid }}"
+    name: "{{ my_custom_item_var.name }}.{{ default_domain_name }}"
+    clone: "{{ selected_template_vmid }}"
+    pool: "Virtual_Machines"
+    full: yes
+    timeout: 260
+    storage: "{{ best_storage.storage }}" # Assuming best_storage contains the storage identifier where the VM should be cloned.
+  when: my_custom_item_var.state | default('present') == 'present'
+
+- name: Wait for cloning to complete
+  pause:
+    seconds: 30
+  when: my_custom_item_var.state | default('present') == 'present'

@@ -25,6 +25,10 @@
   set_fact:
     sorted_nodes: "{{ nodes_with_free_mem | sort(attribute='mem_free', reverse=true) | map(attribute='node') | list }}"
 
+- name: Set target node for VM deployment based on available memory
+  set_fact:
+    target_node: "{{ sorted_nodes | first }}"
+
 - name: Fetch storage information for each node
   uri:
     url: "{{ proxmox_api_url }}/nodes/{{ item }}/storage"

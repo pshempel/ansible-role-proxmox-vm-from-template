@@ -1,24 +1,17 @@
----
-- name: Fetch available VM templates
-  uri:
-    url: "{{ proxmox_api_url }}/cluster/resources?type=vm"
-    method: GET
-    headers:
-      Authorization: "PVEAPIToken={{ proxmox_api_token_id }}={{ proxmox_api_token_secret }}"
-    return_content: yes
-    validate_certs: no  # Adjust in production
-  register: templates
-  delegate_to: localhost
-
-
-- name: Debug template information
-  debug:
-    var: templates  # or whatever variable you're using that should contain 'tags'
-
-- name: Select VM template based on tag and ensure it is a VM type
+- name: Select VM template based on provided tag
   set_fact:
-    selected_template: "{{ (templates | selectattr('type', 'equalto', 'qemu') | selectattr('tags', 'defined') | selectattr('tags', 'search', vm_item.template_tag | default('default_tag')) | list | first) | default('default_template_id') }}"
-
-  loop: "{{ vms }}"
-  loop_control:
-    loop_var: item
+    selected_template_vmid: "{{ vm_info.json.data
+      | selectattr('template', 'equalto', 1)
+      | selectattr('type', 'equalto', 'qemu')
+      | selectattr('tags', 'search', (template_tag | default(default_template_tag)))
+      | map(attribute='vmid')
+      | first
+      | default('') }}"
+#  This task selects the desired template VMID and its current node based on a provided tag
+    template_current_node: "{{ vm_info.json.data
+      | selectattr('template', 'equalto', 1)
+      | selectattr('type', 'equalto', 'qemu')
+      | selectattr('tags', 'search', (template_tag | default(default_template_tag)))
+      | map(attribute='node')
+      | first
+      | default('') }}"

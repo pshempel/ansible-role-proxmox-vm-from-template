@@ -1,0 +1,13 @@
+- name: Check if template needs to be migrated
+  set_fact:
+    needs_migration: "{{ template_current_node != target_node }}"
+
+- name: Debug message if template is on the correct node
+  debug:
+    msg: "Template is already on the target node: {{ target_node }}"
+  when: not needs_migration
+
+- name: Debug message if template needs migration
+  debug:
+    msg: "Template needs to be migrated to the target node: {{ target_node }}"
+  when: needs_migration
