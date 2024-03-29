@@ -30,5 +30,5 @@
 
 - name: Wait for cloning to complete
   pause:
-    seconds: 30
+    seconds: 15
   when: my_custom_item_var.state | default('present') == 'present'

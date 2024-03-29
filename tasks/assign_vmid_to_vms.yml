@@ -1,0 +1,27 @@
+- name: Assign VMIDs to VMs
+  block:
+    - name: Fetch next available VMID from Proxmox if not already provided
+      uri:
+        url: "{{ proxmox_api_url }}/cluster/nextid"
+        method: GET
+        headers:
+          Authorization: "PVEAPIToken={{ proxmox_api_token_id }}={{ proxmox_api_token_secret }}"
+        return_content: yes
+        validate_certs: no  # Adjust for production
+      register: next_vmid_response
+      when: vm_item.vmid | default('') | length == 0
+      delegate_to: localhost
+
+    - name: Set VMID for the current VM if not already provided
+      set_fact:
+        vm_item: "{{ vm_item | combine({'vmid': next_vmid_response.json.data}) }}"
+      when: next_vmid_response is defined
+
+  loop: "{{ vms }}"
+  loop_control:
+    loop_var: vm_item
+  register: updated_vms
+
+- name: Update vms list with new VMIDs
+  set_fact:
+    vms: "{{ updated_vms.results | map(attribute='ansible_facts.vm_item') | list }}"

@@ -1,18 +1,23 @@
 ---
-- name: Configure network settings for deployed VMs
+- name: Configure network settings and modify storage and memory for deployed VMs
   community.general.proxmox_kvm:
     api_user: "{{ proxmox_api_token_id.split('!')[0] }}"
     api_token_id: "{{ proxmox_api_token_id.split('!')[1] }}"
     api_token_secret: "{{ proxmox_api_token_secret }}"
     api_host: "{{ proxmox_api_host }}"
-    node: "{{ item.node }}"
+    node: "{{ target_node }}"
     vmid: "{{ item.vmid }}"
+    memory: "{{ item.memory | default(default_memory_size) }}"
+    cores: "{{ item.cores | default(default_cpu_cores) }}"
+    sockets: "{{ item.sockets | default(default_cpu_sockets) }}"
+    onboot: "{{ item.boot_on_start | default(default_boot_on_start) }}"
     net: >-
       net0=model=virtio,bridge={{ item.bridge | default(default_bridge) }},
       {% if item.vm_network_vlan | default(vm_network_vlan) != 'none' %}tag={{ item.vm_network_vlan | default(vm_network_vlan) | string }},{% endif %}
       firewall=1
       {% if item.ipv4 | default(default_ipv4) != 'none' %},ip={{ item.ipv4 | default(default_ipv4) | string }}{% endif %}
       {% if item.ipv6 | default(default_ipv6) != 'none' %},ip6={{ item.ipv6 | default(default_ipv6) | string }}{% endif %}
+    update: true
   loop: "{{ vms }}"
   loop_control:
     loop_var: item

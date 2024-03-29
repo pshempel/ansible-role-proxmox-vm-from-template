@@ -15,3 +15,6 @@
   set_fact:
     vms: "{{ vms | map('combine', {'vmid': (vm_item.vmid | default(next_vmid_response.json.data))}) | list }}"
   when: vm_item.vmid is not defined or vm_item.vmid == ''
+  loop: "{{ vms }}"
+  loop_control:
+    loop_var: item
