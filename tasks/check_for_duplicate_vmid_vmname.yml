@@ -1,0 +1,23 @@
+- name: Fetch VMs and templates from Proxmox for duplicate checks
+  uri:
+    url: "{{ proxmox_api_url }}/cluster/resources?type=vm"
+    method: GET
+    headers:
+      Authorization: "PVEAPIToken={{ proxmox_api_token_id }}={{ proxmox_api_token_secret }}"
+    return_content: yes
+    validate_certs: no
+  register: all_vms
+  delegate_to: localhost
+
+- name: Check if provided VMID and VM name exists
+  set_fact:
+    vms: >-
+      {{
+        vms | map('combine', {
+          'vmid_exists': (item.vmid is defined) and (item.vmid in (all_vms.json.data | map(attribute='vmid') | map('string') | list)),
+          'vm_name_exists': (item.name in (all_vms.json.data | map(attribute='name') | list))
+        }) | list
+      }}
+  loop: "{{ vms }}"
+  loop_control:
+    loop_var: item

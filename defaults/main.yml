@@ -6,6 +6,7 @@ default_cpu_cores: 2
 default_cpu_sockets: 1     # Number of CPU sockets
 default_boot_on_start: yes # Boot VM on start of Proxmox
 default_template_tag: "bookworm"  # Default VM template tag
+default_pool: "Virtual_Machines"  # Default pool for VMs. Set to an empty string or omit for no default pool.
 default_ipv4: "dhcp"       # Default IPv4 setting
 default_ipv6: "dhcp"       # Default IPv6 setting
 vm_network_vlan: 10       # Default VLAN tag

@@ -1,4 +1,4 @@
-- name: Assign VMIDs to VMs
+- name: Check VMID for each VM and fetch if necessary
   block:
     - name: Fetch next available VMID from Proxmox if not already provided
       uri:
@@ -6,22 +6,20 @@
         method: GET
         headers:
           Authorization: "PVEAPIToken={{ proxmox_api_token_id }}={{ proxmox_api_token_secret }}"
-        return_content: yes
-        validate_certs: no  # Adjust for production
+        return_content: true
+        validate_certs: no
       register: next_vmid_response
-      when: vm_item.vmid | default('') | length == 0
-      delegate_to: localhost
+      when: vm_item.vmid is undefined or vm_item.vmid == ''
 
-    - name: Set VMID for the current VM if not already provided
+    - name: Assign fetched VMID to VM
       set_fact:
-        vm_item: "{{ vm_item | combine({'vmid': next_vmid_response.json.data}) }}"
-      when: next_vmid_response is defined
-
+        vms: >-
+          {{
+            vms | map(attribute='name') | zip(vms | map('combine', {
+              'vmid': (vm_item.vmid | default(next_vmid_response.json.data))
+            })) | map('combine') | list
+          }}
+      when: vm_item.vmid is undefined or vm_item.vmid == ''
   loop: "{{ vms }}"
   loop_control:
-    loop_var: vm_item
-  register: updated_vms
-
-- name: Update vms list with new VMIDs
-  set_fact:
-    vms: "{{ updated_vms.results | map(attribute='ansible_facts.vm_item') | list }}"
+    loop_var: "vm_item"

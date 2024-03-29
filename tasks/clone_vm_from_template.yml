@@ -1,14 +1,14 @@
----
 - name: Debug selected_template_vmid
   debug:
     msg: "Cloning from template VMID: {{ selected_template_vmid }}"
 
 - name: Debug new VMID and Name
   debug:
-    msg: "Creating cloned VMID {{ selected_template_vmid }} with new ID {{ my_custom_item_var.vmid }}
-     and name {{ my_custom_item_var.name }}.{{ default_domain_name }}
-     on node {{ target_node }} on storage {{ best_storage.storage }} 
-     state for this vm is {{ my_custom_item_var.state }}"
+    msg: "Creating cloned VMID {{ selected_template_vmid }} with new ID {{ custom_var.vmid 
+     | default('Automatically assigned by Proxmox') }} 
+     and name {{ custom_var.name }}.{{ default_domain_name }} on node {{ target_node }} 
+     on storage {{ best_storage.storage }} 
+     and pool {{ default_pool }}"
 
 - name: Clone VM from template on Proxmox
   community.general.proxmox_kvm:
@@ -17,18 +17,30 @@
     api_token_secret: "{{ proxmox_api_token_secret }}"
     api_host: "{{ proxmox_api_host }}"
     node: "{{ target_node }}"
-    # vmid: "{{ my_custom_item_var.vmid }}"
     vmid: "{{ selected_template_vmid }}"
-    newid: "{{ my_custom_item_var.vmid }}"
-    name: "{{ my_custom_item_var.name }}.{{ default_domain_name }}"
+    newid: "{{ custom_var.vmid | default(omit) }}"
+    name: "{{ custom_var.name }}.{{ default_domain_name }}"
     clone: "{{ selected_template_vmid }}"
-    pool: "Virtual_Machines"
+    pool: "{{ custom_var.pool | default(default_pool | default(omit)) }}"
     full: yes
     timeout: 260
-    storage: "{{ best_storage.storage }}" # Assuming best_storage contains the storage identifier where the VM should be cloned.
-  when: my_custom_item_var.state | default('present') == 'present'
+    storage: "{{ best_storage.storage }}"
+  loop: "{{ vms }}"
+  loop_control:
+    loop_var: "clone_item"
+  when: 
+    - clone_item.state | default('present') == 'present'
+    - not clone_item.vmid_exists | default(false)
+    - not clone_item.vm_name_exists | default(false)
+
 
 - name: Wait for cloning to complete
   pause:
     seconds: 15
-  when: my_custom_item_var.state | default('present') == 'present'
+  loop: "{{ vms }}"
+  loop_control:
+    loop_var: "wait_item"
+  when: 
+    - wait_item.state | default('present') == 'present'
+    - not wait_item.vmid_exists | default(false)
+    - not wait_item.vm_name_exists | default(false)
