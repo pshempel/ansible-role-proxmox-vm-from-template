@@ -9,6 +9,7 @@ default_template_tag: "bookworm"  # Default VM template tag
 default_pool: "Virtual_Machines"  # Default pool for VMs. Set to an empty string or omit for no default pool.
 default_ipv4: "dhcp"       # Default IPv4 setting
 default_ipv6: "dhcp"       # Default IPv6 setting
+default_node: "pve4"       # Default Proxmox node
 vm_network_vlan: 10       # Default VLAN tag
 default_bridge: "vmbr0"
 preferred_storage_type: 'zfs'  # Preferred storage type, e.g., 'zfs', 'lvm', 'iscsi'

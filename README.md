@@ -23,11 +23,11 @@ This Ansible role facilitates the automated deployment and configuration of virt
 Variables can be defined in the `defaults/main.yml` for global defaults or overridden for specific VMs in the playbook:
 
 ```yaml
-default_memory_size: 2048  # Default VM memory size in MB
-default_disk_size: "30G"   # Default VM disk size
-default_cpu_cores: 2       # Default number of CPU cores per VM
+default_memory_size: 2048           # Default VM memory size in MB
+default_disk_size: "30G"            # Default VM disk size
+default_cpu_cores: 2                # Default number of CPU cores per VM
 default_domain_name: "example.com"  # Default domain name for VMs
-default_bridge: "vmbr0"    # Default network bridge
+default_bridge: "vmbr0"             # Default network bridge
 ```
 
 More detailed configurations and examples can be found in the `defaults/main.yml` file.
@@ -47,7 +47,7 @@ Include the role in your playbook and define the necessary variables:
         node: "auto"  # Use 'auto' for dynamic node selection
         memory: 4096
         disk_size: "50G"
-        template_tag: "Ubuntu 20.04"
+        template_tag: "Ubuntu20.04"
         ipv4: "192.168.1.10"
         vm_network_vlan: 100
 ```
@@ -63,7 +63,7 @@ Deploying a single VM using defaults but with specific memory size and a custom 
   vars:
     vms:
       - name: "dbserver"
-        template_tag: "Debian 10"
+        template_tag: "Debian10"
         memory: 8192
 ```
 
@@ -76,12 +76,12 @@ Deploying multiple VMs with different configurations:
   vars:
     vms:
       - name: "appserver"
-        template_tag: "Ubuntu 20.04"
+        template_tag: "Ubuntu20.04"
         memory: 4096
         cores: 4
         vm_network_vlan: 200
       - name: "testserver"
-        template_tag: "CentOS 8"
+        template_tag: "CentOS8"
         memory: 2048
         vmid: 150  # Specify VMID directly
 ```
