@@ -21,12 +21,6 @@
       vars:
         vm_to_clone: "{{ vm_data_to_clone }}"
 
-    # Wait for cloning to complete and fetch VMID
-    - name: Wait for cloning to complete and fetch VMID
-      include_tasks: wait_and_fetch_vmid.yml
-      vars:
-        vm_to_clone: "{{ vm_data_to_clone }}"
-
     # Configure the cloned VM
     - name: Configure the cloned VM
       include_tasks: configure_cloned_vm.yml

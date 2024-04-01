@@ -10,7 +10,8 @@ default_pool: "Virtual_Machines"  # Default pool for VMs. Set to an empty string
 default_ipv4: "dhcp"       # Default IPv4 setting
 default_ipv6: "dhcp"       # Default IPv6 setting
 default_node: "pve4"       # Default Proxmox node
-vm_network_vlan: 10       # Default VLAN tag
+default_disk: "scsi0"      # Default disk from template
+vm_network_vlan: 10        # Default VLAN tag
 default_bridge: "vmbr0"
 preferred_storage_type: 'zfs'  # Preferred storage type, e.g., 'zfs', 'lvm', 'iscsi'
 proxmox_api_url: "https://pve4.linuxhardcore.com:8006/api2/json" # Proxmox API URL

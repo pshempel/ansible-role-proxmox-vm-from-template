@@ -29,7 +29,7 @@
   include_tasks: check_for_duplicate_vmid_vmname.yml
   loop: "{{ vms }}"
   loop_control:
-    loop_var: vm_to_clone
+    loop_var: vm_data_to_clone
 
 # Need to change variable when including an include, prevent scope issues
 - name: Clone and configure VMs sequentially

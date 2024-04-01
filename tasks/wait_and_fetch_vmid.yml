@@ -1,13 +1,9 @@
 - name: Execute VMID fetch script locally
   ansible.builtin.script: files/fetch_vmid.py "{{ proxmox_api_host }}" "{{ proxmox_api_token_id.split('!')[0] }}" "{{ proxmox_api_token_id.split('!')[1] }}" "{{ proxmox_api_token_secret }}" "{{ vm_to_clone.name }}"
   delegate_to: localhost
-  loop: "{{ vms }}"
-  loop_control:
-    loop_var: "vm_to_clone"
   register: vmid_fetch_results
 
-- name: Debug fetched VMIDs
+- name: Debug fetched VMID
   debug:
-    msg: "Fetched VMID for {{ item.item.name }} is {{ item.stdout }}"
-  loop: "{{ vmid_fetch_results.results }}"
-  when: item.rc == 0  # Condition to only show successful fetches
+    msg: "Fetched VMID for {{ vm_to_clone.name }} is {{ vmid_fetch_results.stdout }}"
+  when: vmid_fetch_results.rc == 0  # Condition to only show successful fetches
