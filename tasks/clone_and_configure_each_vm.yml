@@ -1,0 +1,35 @@
+---
+# tasks/clone_and_configure_each_vm.yml
+
+# Debug the vm_to_clone variable to ensure it's being passed correctly
+- name: Debug vm_data_to_clone variable in tasks
+  debug:
+    var: vm_data_to_clone
+
+# Initial verification to skip cloning if VM already exists
+- name: Check if VM or VMID already exists and skip if true
+  debug:
+    msg: "Skipping cloning for '{{ vm_data_to_clone.name }}' because it already exists."
+  when:
+    - vm_data_to_clone.vmid_exists or vm_data_to_clone.vm_name_exists
+
+# Proceed with cloning if VM does not exist
+- block:
+    # Clone VM from template
+    - name: Clone VM from template
+      include_tasks: clone_vm_from_template.yml
+      vars:
+        vm_to_clone: "{{ vm_data_to_clone }}"
+
+    # Wait for cloning to complete and fetch VMID
+    - name: Wait for cloning to complete and fetch VMID
+      include_tasks: wait_and_fetch_vmid.yml
+      vars:
+        vm_to_clone: "{{ vm_data_to_clone }}"
+
+    # Configure the cloned VM
+    - name: Configure the cloned VM
+      include_tasks: configure_cloned_vm.yml
+      vars:
+        vm_to_clone: "{{ vm_data_to_clone }}"
+  when: not (vm_data_to_clone.vmid_exists or vm_data_to_clone.vm_name_exists)

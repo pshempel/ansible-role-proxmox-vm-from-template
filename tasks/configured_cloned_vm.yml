@@ -18,7 +18,5 @@
       {% if item.ipv4 | default(default_ipv4) != 'none' %},ip={{ item.ipv4 | default(default_ipv4) | string }}{% endif %}
       {% if item.ipv6 | default(default_ipv6) != 'none' %},ip6={{ item.ipv6 | default(default_ipv6) | string }}{% endif %}
     update: true
-  loop: "{{ vms }}"
-  loop_control:
-    loop_var: item
-  when: item.state | default('present') == 'present'
+  when: vm_to_clone.state | default('present') == 'present'
+  

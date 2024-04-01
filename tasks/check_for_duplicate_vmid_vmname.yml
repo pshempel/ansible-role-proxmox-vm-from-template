@@ -14,10 +14,10 @@
     vms: >-
       {{
         vms | map('combine', {
-          'vmid_exists': (item.vmid is defined) and (item.vmid in (all_vms.json.data | map(attribute='vmid') | map('string') | list)),
-          'vm_name_exists': (item.name in (all_vms.json.data | map(attribute='name') | list))
+          'vmid_exists': (check_var.vmid is defined) and (check_var.vmid in (all_vms.json.data | map(attribute='vmid') | map('string') | list)),
+          'vm_name_exists': (check_var.name in (all_vms.json.data | map(attribute='name') | list))
         }) | list
       }}
   loop: "{{ vms }}"
   loop_control:
-    loop_var: item
+    loop_var: check_var

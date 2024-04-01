@@ -28,20 +28,12 @@
 - name: Check for Duplicate VMID when provided from playbook
   include_tasks: check_for_duplicate_vmid_vmname.yml
   loop: "{{ vms }}"
-# loop_control:
-#   loop_var: "custom_var"
+  loop_control:
+    loop_var: vm_to_clone
 
-# Cloning VMs from the selected and verified template using include_tasks for dynamic execution
-- name: Clone a new VM from the template
-  include_tasks: clone_vm_from_template.yml
+# Need to change variable when including an include, prevent scope issues
+- name: Clone and configure VMs sequentially
+  include_tasks: clone_and_configure_each_vm.yml
   loop: "{{ vms }}"
   loop_control:
-    loop_var: "custom_var"
-  when: "custom_var.state | default('present') == 'present' and not custom_var.vmid_exists and not custom_var.vm_name_exists"
-
-# Applying additional configurations to the newly cloned VMs
-- name: Configure deployed VMs
-  include_tasks: configure_vms.yml
-  loop: "{{ vms }}"
-  loop_control:
-    loop_var: "custom_var"
+    loop_var: vm_data_to_clone

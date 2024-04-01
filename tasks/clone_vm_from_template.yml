@@ -2,13 +2,15 @@
   debug:
     msg: "Cloning from template VMID: {{ selected_template_vmid }}"
 
-- name: Debug new VMID and Name
+- name: Debug vm_to_clone variable at start of clone task
   debug:
-    msg: "Creating cloned VMID {{ selected_template_vmid }} with new ID {{ custom_var.vmid 
-     | default('Automatically assigned by Proxmox') }} 
-     and name {{ custom_var.name }}.{{ default_domain_name }} on node {{ target_node }} 
-     on storage {{ best_storage.storage }} 
-     and pool {{ default_pool }}"
+    var: vm_to_clone
+
+# - name: Debug new VMID and Name
+#   debug:
+#     msg: "Creating cloned VMID {{ selected_template_vmid }} with new ID {{ vm_to_clone.vmid 
+#      | default('Automatically assigned by Proxmox') }} and name {{ vm_to_clone.name }}.{{ default_domain_name }} on node {{ target_node }} on storage {{ best_storage.storage }} and pool {{ vm_to_clone.pool 
+#      | default(default_pool | default(omit)) }}"
 
 - name: Clone VM from template on Proxmox
   community.general.proxmox_kvm:
@@ -18,29 +20,39 @@
     api_host: "{{ proxmox_api_host }}"
     node: "{{ target_node }}"
     vmid: "{{ selected_template_vmid }}"
-    newid: "{{ custom_var.vmid | default(omit) }}"
-    name: "{{ custom_var.name }}.{{ default_domain_name }}"
+    newid: "{{ vm_to_clone.vmid | default(omit) }}"
+    name: "{{ vm_to_clone.name }}.{{ default_domain_name }}"
     clone: "{{ selected_template_vmid }}"
-    pool: "{{ custom_var.pool | default(default_pool | default(omit)) }}"
+    pool: "{{ vm_to_clone.pool | default(default_pool | default(omit)) }}"
     full: yes
     timeout: 260
     storage: "{{ best_storage.storage }}"
-  loop: "{{ vms }}"
-  loop_control:
-    loop_var: "clone_item"
-  when: 
-    - clone_item.state | default('present') == 'present'
-    - not clone_item.vmid_exists | default(false)
-    - not clone_item.vm_name_exists | default(false)
 
+- name: Check the status of the clone operation using proxmox_tasks_info
+  community.general.proxmox_tasks_info:
+    api_user: "{{ proxmox_api_token_id.split('!')[0] }}"
+    api_token_id: "{{ proxmox_api_token_id.split('!')[1] }}"
+    api_token_secret: "{{ proxmox_api_token_secret }}"
+    api_host: "{{ proxmox_api_host }}"
+    node: "{{ target_node }}"
+    upid: "{{ clone_task.upid }}"
+  loop: "{{ clone_results.results }}"
+  loop_control:
+    loop_var: "clone_task"
+  register: clone_task_status
+  until: clone_task_status.tasks[0].status == "stopped"
+  retries: 30
+  delay: 10
+  when: 
+    - clone_task.state | default('present') == 'present'
+    - not clone_task.vmid_exists | default(false)
+    - not clone_task.vm_name_exists | default(false)
 
 - name: Wait for cloning to complete
   pause:
-    seconds: 15
-  loop: "{{ vms }}"
-  loop_control:
-    loop_var: "wait_item"
+    seconds: 5
   when: 
-    - wait_item.state | default('present') == 'present'
-    - not wait_item.vmid_exists | default(false)
-    - not wait_item.vm_name_exists | default(false)
+    - clone_results_var.state | default('present') == 'present'
+    - not clone_results.vmid_exists | default(false)
+    - not clone_results.vm_name_exists | default(false)
+    - "'UPID' in clone_results.results[ansible_loop.index0]" #
