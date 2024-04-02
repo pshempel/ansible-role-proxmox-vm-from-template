@@ -22,9 +22,7 @@
     api_host: "{{ proxmox_api_host }}"
     vmid: "{{ clone_results.vmid }}"
     storage: "{{ vm_to_clone.disk_storage | default('iscsi0') }}"
-    # disk: "scsi0"
     disk: "{{ vm_to_clone.disk | default(default_disk) }}"
-    # size: "{{ vm_to_clone.disk_size | regex_replace('G', '') }}"
     size: "{{ vm_to_clone.disk_size }}"
     state: resized
   when: vm_to_clone.state | default('present') == 'present' and vm_to_clone.disk_size is defined
