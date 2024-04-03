@@ -14,10 +14,19 @@
     vms: >-
       {{
         vms | map('combine', {
-          'vmid_exists': (check_var.vmid is defined) and (check_var.vmid in (all_vms.json.data | map(attribute='vmid') | map('string') | list)),
-          'vm_name_exists': (check_var.name in (all_vms.json.data | map(attribute='name') | list))
+          'vmid_exists': (vm_data_to_clone.vmid is defined) and (vm_data_to_clone.vmid in (all_vms.json.data 
+          | map(attribute='vmid') | map('string') | list)),
+          'vm_name_exists': (vm_data_to_clone.name in (all_vms.json.data 
+          | map(attribute='name') | list))
         }) | list
       }}
+- name: Debug vm_data_to_clone.vmid variable in Check and provide VMID and VM name exists
+  debug:
+    msg: >
+      The vmname is: {{ vm_data_to_clone.name }}. \n
+      The vmid is: {{ vm_data_to_clone.vmid | default('VMID was not passed') }}
+# Debug the vm_to_clone variable to ensure it's being passed correctly
   loop: "{{ vms }}"
   loop_control:
-    loop_var: check_var
+    loop_var: check_if_vmid_or_vname_exists
+  
