@@ -1,0 +1,9 @@
+# tasks/deploy_cloud_init.yml
+- name: Generate Cloud-Init config for VM
+  template:
+    src: cloud_init_config.j2
+    dest: "{{ local_cloud_init_path }}{{ vm_to_clone.vmid }}.yaml"
+  delegate_to: "{{ node }}"
+  become: true
+  become_user: ssh-automation-user
+  when: include_custom_cloud_init == 'yes'

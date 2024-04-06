@@ -1,13 +1,26 @@
+# Find the location of the template to clone from and migrate it to the correct node
+
+- name: Reset migration completion 
+  set_fact:
+    migration_needed: false
+
 - name: Check if template needs to be migrated
   set_fact:
-    needs_migration: "{{ template_current_node != target_node }}"
+    needs_migration: "{{ template_current_node != vm_target_node }}"
+
+- name: Debug vm_to_clone.node and vm_target_node
+  debug:
+    msg: >
+      In Check Template location: Requested node for vm is: {{ vm_to_clone.node | default('Was not provided in playbook') }}. 
+      Target node is: {{ vm_target_node }}. Template current node is: {{ template_current_node }}.
+      Needs migration is set to {{ needs_migration | default('Not determined yet') }}.
 
 - name: Debug message if template is on the correct node
   debug:
-    msg: "Template is already on the target node: {{ target_node }}"
+    msg: "Template is already on the target node: {{ vm_target_node }}"
   when: not needs_migration
 
 - name: Debug message if template needs migration
   debug:
-    msg: "Template needs to be migrated to the target node: {{ target_node }}"
+    msg: "Template needs to be migrated to the target node: {{ vm_target_node }}"
   when: needs_migration

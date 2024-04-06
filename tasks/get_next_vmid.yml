@@ -1,6 +1,0 @@
----
-- name: Check and Set VMID for each VM
-  include_tasks: set_vmid_for_vm.yml
-  loop: "{{ vms }}"
-  loop_control:
-    loop_var: 'vm_item'

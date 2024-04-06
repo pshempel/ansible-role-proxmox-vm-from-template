@@ -1,4 +1,17 @@
-- name: Migrate the template to the target node
+- name: Debug vm_to_clone.node and vm_target_node
+  debug:
+    msg: "Requested node for vm is: {{ vm_to_clone.node | default('not provided in playbook') }}. Target node is: {{ vm_target_node }}."
+
+- name: Determine the template migration target node
+  set_fact:
+    migration_target_node: "{{ vm_to_clone.node | default(vm_target_node) }}"
+  when: vm_to_clone.node is defined
+
+- name: Debug the determined template migration target node
+  debug:
+    msg: "Determined template migration target node: {{ migration_target_node  | default(omit) }}"
+
+- name: Migrate the template to the requested node
   uri:
     url: "{{ proxmox_api_url }}/nodes/{{ template_current_node }}/qemu/{{ selected_template_vmid }}/migrate"
     method: POST
@@ -7,13 +20,16 @@
     body_format: json
     body: >
       {
-        "target": "{{ target_node }}"
+        "target": "{{ migration_target_node }}"
       }
-    status_code: [200, 202]  # Expecting a 200 OK or 202 Accepted status code.
+    status_code: [200, 202]
     validate_certs: no
-  register: migration_response  # This captures the response, including the UPID for the migration task.
+  register: migration_response
+  when: 
+    - template_current_node != migration_target_node
+    - migration_target_node is defined
 
-- name: Wait for the migration task to complete
+- name: Wait for the template migration task to complete
   uri:
     url: "{{ proxmox_api_url }}/nodes/{{ template_current_node }}/tasks/{{ migration_response.json.data }}/status"
     method: GET
@@ -21,8 +37,16 @@
       Authorization: "PVEAPIToken={{ proxmox_api_token_id }}={{ proxmox_api_token_secret }}"
     return_content: yes
     validate_certs: no
-  register: migration_status  # This captures the status of the migration task.
-  until: migration_status.json.data.status == "stopped"  # Loop until the status is "stopped".
-  retries: 60  # Number of retries.
-  delay: 5  # Delay between retries, in seconds.
-  when: migration_response.json.data is defined  # Proceed only if the UPID is successfully captured.
+  register: migration_status
+  until: migration_status.json.data.status == "stopped"
+  retries: 60
+  delay: 10
+  when: 
+    - migration_response is defined
+    - "'json' in migration_response"
+    - "'data' in migration_response.json"
+
+- name: Set migration completion flag
+  set_fact:
+    migration_completed: true
+  when: migration_response is defined and (migration_response.status in [200, 202])

@@ -1,0 +1,6 @@
+- name: Copy Cloud-Init config to Proxmox storage
+  ansible.builtin.copy:
+    src: "{{ local_cloud_init_path }}{{ vm_to_clone.vmid }}.yaml"
+    dest: "{{ proxmox_cloud_init_storage_path }}{{ vm_to_clone.vmid }}.yaml"
+  delegate_to: "{{ proxmox_node_hostname }}"
+  when: include_custom_cloud_init == 'yes'

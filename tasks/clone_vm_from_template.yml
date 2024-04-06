@@ -8,9 +8,11 @@
 
 - name: Debug new VMID and Name
   debug:
-    msg: "Creating cloned VMID {{ selected_template_vmid }} with new ID {{ vm_to_clone.vmid 
-     | default('Automatically assigned by Proxmox') }} and name {{ vm_to_clone.name }}.{{ default_domain_name }} on node {{ target_node }} on storage {{ best_storage.storage }} and pool {{ vm_to_clone.pool 
-     | default(default_pool | default(omit)) }}"
+    msg: > 
+     "Creating from cloned VMID {{ selected_template_vmid }} with new vm with ID {{ vm_to_clone.vmid 
+     | default('Automatically assigned by Proxmox') }} and name {{ vm_to_clone.name }}.{{ default_domain_name }} 
+      on node {{ vm_target_node }} on storage {{ best_storage.storage }} and pool {{ vm_to_clone.pool 
+     | default(default_pool | default(omit)) }} "
 
 - name: Clone VM from template if it does not exist
   community.general.proxmox_kvm:
@@ -18,7 +20,7 @@
     api_token_id: "{{ proxmox_api_token_id.split('!')[1] }}"
     api_token_secret: "{{ proxmox_api_token_secret }}"
     api_host: "{{ proxmox_api_host }}"
-    node: "{{ target_node }}"
+    node: "{{ vm_to_clone.node | default(vm_target_node) }}"
     vmid: "{{ selected_template_vmid }}"
     newid: "{{ vm_to_clone.vmid | default(omit) }}"
     name: "{{ vm_to_clone.name }}.{{ default_domain_name }}"
@@ -26,11 +28,21 @@
     pool: "{{ vm_to_clone.pool | default(default_pool | default(omit)) }}"
     full: yes
     storage: "{{ best_storage.storage }}"
+# This is for the cloud init section, will be completed after fixing other issues
+#    cicustom: >-
+#      {{ 
+#        ('vendor=' + proxmox_cloud_init_storage_path + vm_to_clone.vmid + '.yaml' 
+#        if custom_cloud_init_behavior == 'append' 
+#        else proxmox_cloud_init_storage_path + vm_to_clone.vmid + '.yaml') 
+#        if include_custom_cloud_init == 'yes' 
+#        else omit 
+#      }}
     timeout: 260  # Extended timeout to accommodate longer clone operations
+    
   register: clone_results
   when: 
-    - not vm_to_clone.vmid_exists
-    - not vm_to_clone.vm_name_exists
+    - not vmname_exists[vm_data_to_clone.name] | default(false)
+    - not vmid_exists[vm_data_to_clone.name] | default(false)
 
 # Optional: Add a debug task to print clone operation result or UPID
 - name: Debug clone operation result

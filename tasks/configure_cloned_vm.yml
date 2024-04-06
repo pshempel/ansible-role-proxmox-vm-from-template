@@ -5,7 +5,7 @@
     api_token_id: "{{ proxmox_api_token_id.split('!')[1] }}"
     api_token_secret: "{{ proxmox_api_token_secret }}"
     api_host: "{{ proxmox_api_host }}"
-    node: "{{ target_node }}"
+    node: "{{ vm_target_node }}"
     vmid: "{{ clone_results.vmid }}"
     memory: "{{ vm_to_clone.memory | default(default_memory_size) }}"
     cores: "{{ vm_to_clone.cores | default(default_cpu_cores) }}"

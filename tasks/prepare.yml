@@ -1,4 +1,11 @@
 ---
+# - name: Reset sorted_nodes in prepare
+#  set_fact:
+#    sorted_nodes:
+#- name: Reset storage_info in prepare
+#  set_fact:
+#    storage_info:
+
 - name: Fetch cluster node information
   uri:
     url: "{{ proxmox_api_url }}/cluster/resources?type=node"
@@ -27,7 +34,7 @@
 
 - name: Set target node for VM deployment based on available memory
   set_fact:
-    target_node: "{{ sorted_nodes | first }}"
+    vm_target_node: "{{ vm_data_to_clone.node | default(sorted_nodes | first) }}"
 
 - name: Fetch storage information for each node
   uri:
@@ -47,3 +54,8 @@
 - name: Determine the best storage considering preferred type
   set_fact:
     best_storage: "{{ preferred_storages | first | default(storage_info.results | map(attribute='json.data') | flatten | sort(attribute='avail', reverse=true) | first) }}"
+
+# # Debug target node based on vm_data_to_clone.node 
+#- name: Debug vm_data_to_clone.node showing requested node from playbook
+#  debug:
+#    msg: "Playbook has requested {{ vm_data_to_clone.node }} to place  {{ vm_data_to_clone.name }}"

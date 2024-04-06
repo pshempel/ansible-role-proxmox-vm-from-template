@@ -8,25 +8,41 @@
     validate_certs: no
   register: all_vms
   delegate_to: localhost
-
-- name: Check if provided VMID and VM name exists
+  
+  #  Verify we are not attempting to create or update an existing VM Name
+- name: Check if provided VM name exists
   set_fact:
-    vms: >-
-      {{
-        vms | map('combine', {
-          'vmid_exists': (vm_data_to_clone.vmid is defined) and (vm_data_to_clone.vmid in (all_vms.json.data 
-          | map(attribute='vmid') | map('string') | list)),
-          'vm_name_exists': (vm_data_to_clone.name in (all_vms.json.data 
-          | map(attribute='name') | list))
-        }) | list
-      }}
-- name: Debug vm_data_to_clone.vmid variable in Check and provide VMID and VM name exists
-  debug:
-    msg: >
-      The vmname is: {{ vm_data_to_clone.name }}. \n
-      The vmid is: {{ vm_data_to_clone.vmid | default('VMID was not passed') }}
-# Debug the vm_to_clone variable to ensure it's being passed correctly
+    vmname_exists: "{{ vmname_exists | default({}) | combine({ item.name: (item.name + '.' + default_domain_name) in all_vms.json.data | map(attribute='name') | list }) }}"
   loop: "{{ vms }}"
   loop_control:
-    loop_var: check_if_vmid_or_vname_exists
-  
+    loop_var: item
+
+# Begin Debugging of VM ID raw vmid list
+#- name: Debug all VMIDs from Proxmox
+#  debug:
+#    msg: "{{ all_vms.json.data | map(attribute='vmid') | map('string') | list }}"
+
+# # Begin Debugging of VM ID assigned vmid
+#- name: Debug specific VMID check list
+#  debug:
+#    msg: "Checking if VMID '{{ vmid_dbg_check.vmid }}' exists: {{ (vmid_dbg_check.vmid is defined and vmid_dbg_check.vmid|string in all_vms.json.data | map(attribute='vmid') | map('string') | list) }}"
+#  loop: "{{ vms }}"
+#  loop_control:
+#    loop_var: vmid_dbg_check
+
+# Set vmid_exists True if it does exits
+- name: Check if provided VMID exists
+  set_fact:
+    vmid_exists: "{{ vmid_exists | default({}) | combine({ item.vmid: (item.vmid is defined and item.vmid|string in all_vms.json.data | map(attribute='vmid') | map('string') | list) }) }}"
+  loop: "{{ vms }}"
+  loop_control:
+    loop_var: item
+  when: item.vmid is defined
+
+- name: Debug vmname_exists check results
+  debug:
+    var: vmname_exists
+
+- name: Debug vmid_exists check results
+  debug:
+    var: vmid_exists

@@ -12,8 +12,14 @@ default_ipv6: "dhcp"       # Default IPv6 setting
 default_node: "pve4"       # Default Proxmox node
 default_disk: "scsi0"      # Default disk from template
 vm_network_vlan: 10        # Default VLAN tag
+default_domain_name: "linuxhardcore.com"
 default_bridge: "vmbr0"
 preferred_storage_type: 'zfs'  # Preferred storage type, e.g., 'zfs', 'lvm', 'iscsi'
 proxmox_api_url: "https://pve4.linuxhardcore.com:8006/api2/json" # Proxmox API URL
 proxmox_api_host: "pve4.linuxhardcore.com:8006" # do not include https or http
-default_domain_name: "linuxhardcore.com"
+# This is the path on the cluster local system
+local_cloud_init_path: "/path/to/local/cloud_init_files/"
+cloud_init_storage_path: "local:snippets/"
+include_custom_cloud_init: no
+custom_cloud_init_behavior: "append"  # Options: "append", "replace"
+skip_package_check: yes # whether to skip local package install on run or not

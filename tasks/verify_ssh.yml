@@ -1,0 +1,16 @@
+- name: Verify SSH access and write permission
+  ansible.builtin.command: touch /path/to/shared/storage/test_permission_file
+  delegate_to: "{{ node }}"
+  become: true
+  become_user: ssh-automation-user
+  ignore_errors: true
+  register: permission_check
+
+- name: Cleanup test file
+  ansible.builtin.file:
+    path: /path/to/shared/storage/test_permission_file
+    state: absent
+  delegate_to: "{{ node }}"
+  become: true
+  become_user: ssh-automation-user
+  when: permission_check is succeeded

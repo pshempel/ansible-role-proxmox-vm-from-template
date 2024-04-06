@@ -1,0 +1,48 @@
+
+- name: Debug selected_tempalte_vmid migration_completed and template_current_node
+  debug:
+     msg: >
+      Template VMID for reresh is: {{ selected_template_vmid }}
+      Migration was completed: {{ migration_completed }}
+      And migration is needed: {{ needs_migration }}
+
+- name: Reset template_current_node to null
+  set_fact:
+    template_current_node:
+
+#- name: Look for the debug information of selected_template_vmid
+#  ansible.builtin.pause:
+#    prompt: "Look at the debug above"
+
+###
+- name: Refresh template current node after migration
+  uri:
+    url: "{{ proxmox_api_url }}/cluster/resources?type=vm"
+    method: GET
+    headers:
+      Authorization: "PVEAPIToken={{ proxmox_api_token_id }}={{ proxmox_api_token_secret }}"
+    return_content: yes
+    validate_certs: no
+  register: refreshed_template_info
+  delegate_to: localhost
+  when: needs_migration and migration_completed
+  # when: needs_migration
+
+- name: Update template_current_node based on refreshed information
+  set_fact:
+    template_current_node: "{{ (refreshed_template_info.json.data
+     | selectattr('vmid', 'equalto', selected_template_vmid | int)
+     | list | first).node }}"
+  when:
+     - needs_migration and migration_completed
+     # - needs_migration
+     - refreshed_template_info is defined
+     - refreshed_template_info.json.data | selectattr('vmid', 'equalto', selected_template_vmid | int) | list | length > 0
+####
+- name: Debug refreshed template info template_current_node
+  debug:
+    var: template_current_node
+
+- name: Debug refreshed template info on refreshed_template_info.json.data
+  debug:
+    var: refreshed_template_info.json.data
