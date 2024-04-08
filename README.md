@@ -56,6 +56,8 @@ Include the role in your playbook and define the necessary variables:
   gather_facts: no
   roles:
     - ansible-role-proxmox-vm-from-template
+  vars_files:                                 
+    - vars/proxmox_secrets.yml # Contains encrypted API credentials
   vars:
     vms:
       - name: "webserver"
@@ -104,7 +106,7 @@ Deploying multiple VMs with different configurations:
 
 ## License:
 
-MIT License
+ License GPL-2.0-or-later
 
 ## Author Information:
 
