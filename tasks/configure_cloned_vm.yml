@@ -11,6 +11,7 @@
     cores: "{{ vm_to_clone.cores | default(default_cpu_cores) }}"
     sockets: "{{ vm_to_clone.sockets | default(default_cpu_sockets) }}"
     onboot: "{{ vm_to_clone.boot_on_start | default(default_boot_on_start) }}"
+    tags: "{{ vm_to_clone.tags | default(omit)}}"
     update: true
   when: vm_to_clone.state | default('present') == 'present'
 

@@ -11,6 +11,7 @@ default_ipv4: "dhcp"       # Default IPv4 setting
 default_ipv6: "dhcp"       # Default IPv6 setting
 default_node: "pve4"       # Default Proxmox node
 default_disk: "scsi0"      # Default disk from template
+default_validate_certs: "True"
 vm_network_vlan: 10        # Default VLAN tag
 default_domain_name: "linuxhardcore.com"
 default_bridge: "vmbr0"

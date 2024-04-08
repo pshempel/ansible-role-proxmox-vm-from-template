@@ -13,7 +13,7 @@
     headers:
       Authorization: "PVEAPIToken={{ proxmox_api_token_id }}={{ proxmox_api_token_secret }}"
     return_content: yes
-    validate_certs: no  # Change to yes in production
+    validate_certs: "{{ vm_to_clone.default_validate_certs | default(no) }}"
   delegate_to: localhost
   register: node_info
 
