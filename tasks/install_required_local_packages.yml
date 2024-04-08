@@ -6,6 +6,7 @@
     name:
       - python3-proxmoxer
       - python3-requests
+      - python3-paramiko
     state: present
     update_cache: yes
   become: true
