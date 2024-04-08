@@ -57,17 +57,17 @@ Include the role in your playbook and define the necessary variables:
   roles:
     - ansible-role-proxmox-vm-from-template
   vars_files:                                 
-    - vars/proxmox_secrets.yml # Contains encrypted API credentials
+    - vars/proxmox_secrets.yml                         # Contains encrypted API credentials
   vars:
     vms:
       - name: "webserver"
-        node: "auto"  # Use 'auto' for dynamic node selection
+        node: "auto"                                   # Use 'auto' for dynamic node selection
         memory: 4096
         disk_size: "50G"
         template_tag: "Ubuntu20.04"
-        ipv4: "192.168.1.10"
+        ipv4: "192.168.1.10"                          # For cloud init
         vm_network_vlan: 100
-        tags: "tag_with_comma_delimmited,other_tag"
+        tags: "tag-with-comma-delimmited,other-tag"   # Tags cannot have spaces or underscores "_"
 ```
 
 ## Examples:
