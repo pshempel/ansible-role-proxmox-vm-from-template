@@ -1,16 +1,17 @@
 - name: Debug selected_template_vmid
-  debug:
+  ansible.builtin.debug:
     msg: "Cloning from template VMID: {{ selected_template_vmid }}"
 
 - name: Debug vm_to_clone variable at start of clone task
-  debug:
+  ansible.builtin.debug:
     var: vm_to_clone
 
 - name: Debug new VMID and Name
-  debug:
+  ansible.builtin.debug:
     msg: > 
      "Creating from cloned VMID {{ selected_template_vmid }} with new vm with ID {{ vm_to_clone.vmid 
-     | default('Automatically assigned by Proxmox') }} and name {{ vm_to_clone.name }}.{{ default_domain_name }} 
+     | default('Automatically assigned by Proxmox') }} and name {{ vm_to_clone.name }}.{{ vm_to_clone.domain_name 
+     | default(default_domain_name) }} 
       on node {{ vm_target_node }} on storage {{ best_storage.storage }} and pool {{ vm_to_clone.pool 
      | default(default_pool | default(omit)) }} "
 
@@ -23,7 +24,7 @@
     node: "{{ vm_to_clone.node | default(vm_target_node) }}"
     vmid: "{{ selected_template_vmid }}"
     newid: "{{ vm_to_clone.vmid | default(omit) }}"
-    name: "{{ vm_to_clone.name }}.{{ default_domain_name }}"
+    name: "{{ vm_to_clone.name }}.{{ vm_to_clone.domain_name | default(default_domain_name) }}"
     clone: yes
     pool: "{{ vm_to_clone.pool | default(default_pool | default(omit)) }}"
     full: yes
@@ -37,15 +38,15 @@
 #        if include_custom_cloud_init == 'yes' 
 #        else omit 
 #      }}
-    timeout: 260  # Extended timeout to accommodate longer clone operations
+    timeout: "{{ vm_to_clone.default_api_timeout | default(360) }}"  # Extended timeout to accommodate longer clone operations
     
   register: clone_results
   when: 
     - not vmname_exists[vm_data_to_clone.name] | default(false)
     - not vmid_exists[vm_data_to_clone.name] | default(false)
 
-# Optional: Add a debug task to print clone operation result or UPID
+# Add a debug task to print clone operation result or UPID
 - name: Debug clone operation result
-  debug:
+  ansible.builtin.debug:
     var: clone_results
   

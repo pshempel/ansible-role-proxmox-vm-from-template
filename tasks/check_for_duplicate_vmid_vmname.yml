@@ -5,7 +5,7 @@
     headers:
       Authorization: "PVEAPIToken={{ proxmox_api_token_id }}={{ proxmox_api_token_secret }}"
     return_content: yes
-    validate_certs: {{ vm_to_clone.default_validate_certs | default(no) }}
+    validate_certs: "{{ vm_to_clone.default_validate_certs | default('no') }}"
   register: all_vms
   delegate_to: localhost
   
@@ -19,12 +19,12 @@
 
 # Begin Debugging of VM ID raw vmid list
 #- name: Debug all VMIDs from Proxmox
-#  debug:
+#  ansible.builtin.debug:
 #    msg: "{{ all_vms.json.data | map(attribute='vmid') | map('string') | list }}"
 
 # # Begin Debugging of VM ID assigned vmid
 #- name: Debug specific VMID check list
-#  debug:
+#  ansible.builtin.debug:
 #    msg: "Checking if VMID '{{ vmid_dbg_check.vmid }}' exists: {{ (vmid_dbg_check.vmid is defined and vmid_dbg_check.vmid|string in all_vms.json.data | map(attribute='vmid') | map('string') | list) }}"
 #  loop: "{{ vms }}"
 #  loop_control:
@@ -40,9 +40,9 @@
   when: item.vmid is defined
 
 - name: Debug vmname_exists check results
-  debug:
+  ansible.builtin.debug:
     var: vmname_exists
 
 - name: Debug vmid_exists check results
-  debug:
+  ansible.builtin.debug:
     var: vmid_exists

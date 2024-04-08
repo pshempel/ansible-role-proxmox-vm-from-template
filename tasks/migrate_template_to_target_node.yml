@@ -1,5 +1,6 @@
+  
 - name: Debug vm_to_clone.node and vm_target_node
-  debug:
+  ansible.builtin.debug:
     msg: "Requested (vm_to_clone.node) node for vm is: {{ vm_to_clone.node | default('not provided in playbook') }}. Target node is: {{ vm_target_node }}."
 
 - name: Determine the template migration target node
@@ -8,8 +9,13 @@
   when: vm_to_clone.node is defined or vm_target_node is defined
 
 - name: Debug the determined template migration target node
-  debug:
+  ansible.builtin.debug:
     msg: "Determined template migration target node: {{ migration_target_node  | default('Migration Target Node not determined yet') }}"
+
+- name: Ensure template_current_node is defined
+  fail:
+    msg: "'template_current_node' is not defined or is empty. Ensure it's correctly set before proceeding."
+  when: template_current_node is not defined or template_current_node | trim == ""
 
 - name: Migrate the template to the requested node
   uri:
@@ -23,7 +29,7 @@
         "target": "{{ migration_target_node }}"
       }
     status_code: [200, 202]
-    validate_certs: {{ vm_to_clone.default_validate_certs | default(no) }}
+    validate_certs: "{{ vm_to_clone.default_validate_certs | default('no') }}"
   register: migration_response
   when:
     - template_current_node != migration_target_node
@@ -36,7 +42,7 @@
     headers:
       Authorization: "PVEAPIToken={{ proxmox_api_token_id }}={{ proxmox_api_token_secret }}"
     return_content: yes
-    validate_certs: "{{ vm_to_clone.default_validate_certs | default(no) }}"
+    validate_certs: "{{ vm_to_clone.default_validate_certs | default('no') }}"
   register: migration_status
   until: migration_status.json.data.status == "stopped"
   retries: 60

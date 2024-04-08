@@ -13,24 +13,26 @@
     headers:
       Authorization: "PVEAPIToken={{ proxmox_api_token_id }}={{ proxmox_api_token_secret }}"
     return_content: yes
-    validate_certs: "{{ vm_to_clone.default_validate_certs | default(no) }}"
+    validate_certs: "{{ vm_to_clone.default_validate_certs | default('no') }}"
   delegate_to: localhost
   register: node_info
 
-# Calculate free memory for each node
+# Calculate free memory for each node and only run when node is not defined in playbook
+
 - name: Calculate free memory for each node
   set_fact:
     nodes_with_free_mem: "{{ nodes_with_free_mem | default([]) + 
                               [{ 'node': item.node, 
-                                 'mem_free': item.maxmem - item.mem,
-                                 'maxcpu': item.maxcpu,
-                                 'maxdisk': item.maxdisk }] }}"
+                                'mem_free': item.maxmem - item.mem,
+                                'maxcpu': item.maxcpu,
+                                'maxdisk': item.maxdisk }] }}"
   loop: "{{ node_info.json.data }}"
   when: item.type == 'node'  # Ensure we're only dealing with node objects
 
 - name: Sort nodes by available memory
   set_fact:
-    sorted_nodes: "{{ nodes_with_free_mem | sort(attribute='mem_free', reverse=true) | map(attribute='node') | list }}"
+    # sorted_nodes: "{{ nodes_with_free_mem | sort(attribute='mem_free', reverse=true) | map(attribute='node') | list }}"
+    sorted_nodes: "{{ ([vm_data_to_clone.node] if vm_data_to_clone.node is defined else nodes_with_free_mem | sort(attribute='mem_free', reverse=true) | map(attribute='node') | list) }}"
 
 - name: Set target node for VM deployment based on available memory
   set_fact:
@@ -55,7 +57,8 @@
   set_fact:
     best_storage: "{{ preferred_storages | first | default(storage_info.results | map(attribute='json.data') | flatten | sort(attribute='avail', reverse=true) | first) }}"
 
-# # Debug target node based on vm_data_to_clone.node 
-#- name: Debug vm_data_to_clone.node showing requested node from playbook
-#  debug:
-#    msg: "Playbook has requested {{ vm_data_to_clone.node }} to place  {{ vm_data_to_clone.name }}"
+# Debug target node based on vm_data_to_clone.node 
+- name: Debug vm_data_to_clone.node showing requested node from playbook
+  ansible.builtin.debug:
+    msg: "Playbook has requested {{ vm_data_to_clone.node }} to place  {{ vm_data_to_clone.name }}"
+  when: vm_data_to_clone.node is defined

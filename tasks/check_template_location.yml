@@ -8,19 +8,24 @@
   set_fact:
     needs_migration: "{{ template_current_node != vm_target_node }}"
 
+- name: Ensure template_current_node is defined
+  fail:
+    msg: "'template_current_node' is not defined or is empty. Ensure it's correctly set before proceeding."
+  when: template_current_node is not defined or template_current_node | trim == ""
+
 - name: Debug vm_to_clone.node and vm_target_node
-  debug:
+  ansible.builtin.debug:
     msg: >
       In Check Template location: Requested node for vm is: {{ vm_to_clone.node | default('Was not provided in playbook') }}. 
-      Target node is: {{ vm_target_node }}. Template current node is: {{ template_current_node }}.
+      Target node is: {{ vm_target_node }}. Template current node is: {{ template_current_node | default('is not defined') }}.
       Needs migration is set to {{ needs_migration | default('Not determined yet') }}.
 
 - name: Debug message if template is on the correct node
-  debug:
+  ansible.builtin.debug:
     msg: "Template is already on the target node: {{ vm_target_node }}"
   when: not needs_migration
 
 - name: Debug message if template needs migration
-  debug:
+  ansible.builtin.debug:
     msg: "Template needs to be migrated to the target node: {{ vm_target_node }}"
   when: needs_migration

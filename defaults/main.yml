@@ -2,17 +2,20 @@
 # Default VM configurations
 default_memory_size: 2048  # MB
 default_disk_size: "30G"   # Disk size
-default_cpu_cores: 2
 default_cpu_sockets: 1     # Number of CPU sockets
-default_boot_on_start: yes # Boot VM on start of Proxmox
+default_cpu_cores: 2       # Number of per CPU cores
 default_template_tag: "bookworm"  # Default VM template tag
 default_pool: "Virtual_Machines"  # Default pool for VMs. Set to an empty string or omit for no default pool.
 default_ipv4: "dhcp"       # Default IPv4 setting
 default_ipv6: "dhcp"       # Default IPv6 setting
 default_node: "pve4"       # Default Proxmox node
 default_disk: "scsi0"      # Default disk from template
+default_vm_agent: "yes"    # Enable agent on vm
+default_boot_on_start: yes # Boot VM on start of Proxmox
+default_start_vm: "no"
 default_validate_certs: "True"
-vm_network_vlan: 10        # Default VLAN tag
+default_api_timeout: 120  # Defaults to 360 seconds if not set
+default_vm_network_vlan: 10        # Default VLAN tag
 default_domain_name: "linuxhardcore.com"
 default_bridge: "vmbr0"
 preferred_storage_type: 'zfs'  # Preferred storage type, e.g., 'zfs', 'lvm', 'iscsi'

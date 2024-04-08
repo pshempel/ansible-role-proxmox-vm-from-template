@@ -6,12 +6,12 @@
 
 # Debug the vm_to_clone variable to ensure it's being passed correctly
 - name: Debug vm_data_to_clone variable in tasks clone_and_configure_each_vm
-  debug:
+  ansible.builtin.debug:
     var: vm_data_to_clone
 
 # Initial verification to skip cloning if VM already exists
 - name: Check if VM name or VMID already exists and skip if true
-  debug:
+  ansible.builtin.debug:
     msg: "Skipping cloning for '{{ vm_data_to_clone.name }}' because it already exists."
   when:
     - vmname_exists[vm_data_to_clone.name] | default(false)

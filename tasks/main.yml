@@ -33,10 +33,14 @@
 #  loop_control:
 #     loop_var: vm_data_to_clone
 
+- name: Prepare and sort VMs by node name
+  set_fact:
+    sorted_vms: "{{ vms | groupby('node') | sort | map('last') | flatten }}"
+
 # Need to change variable when including an include, prevent scope issues
 - name: Clone and configure VMs sequentially
   include_tasks: clone_and_configure_each_vm.yml 
-  loop: "{{ vms }}"
+  loop: "{{ sorted_vms }}"
   loop_control:
     loop_var: vm_data_to_clone
   

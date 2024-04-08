@@ -24,9 +24,11 @@
     vmid: "{{ clone_results.vmid }}"
     storage: "{{ vm_to_clone.disk_storage | default('iscsi0') }}"
     disk: "{{ vm_to_clone.disk | default(default_disk) }}"
-    size: "{{ vm_to_clone.disk_size }}"
+    size: "{{ vm_to_clone.disk_size  | default(default_disk_size) }}"
     state: resized
-  when: vm_to_clone.state | default('present') == 'present' and vm_to_clone.disk_size is defined
+  when:
+    - vm_to_clone.state | default('present') == 'present'
+    - (default_disk_size is defined or vm_to_clone.disk_size is defined)
 
 # Update VM network settings using proxmox_nic
 - name: Update VM network settings
@@ -38,7 +40,9 @@
     vmid: "{{ clone_results.vmid }}"
     interface: "net0"
     bridge: "{{ vm_to_clone.bridge | default('vmbr0') }}"
-    tag: "{{ vm_to_clone.vm_network_vlan | default(vm_network_vlan, true) }}"
+    tag: "{{ vm_to_clone.vm_network_vlan | default(default_vm_network_vlan, true) }}"
     firewall: "1"
     state: present
-  when: vm_to_clone.state | default('present') == 'present' and vm_to_clone.vm_network_vlan is defined
+  when:
+  - vm_to_clone.state | default('present') == 'present'
+  - (default_vm_network_vlan is defined or vm_to_clone.vm_network_vlan is defined)
