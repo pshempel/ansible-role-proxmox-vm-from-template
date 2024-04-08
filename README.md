@@ -23,11 +23,26 @@ This Ansible role facilitates the automated deployment and configuration of virt
 Variables can be defined in the `defaults/main.yml` for global defaults or overridden for specific VMs in the playbook:
 
 ```yaml
-default_memory_size: 2048           # Default VM memory size in MB
-default_disk_size: "30G"            # Default VM disk size
-default_cpu_cores: 2                # Default number of CPU cores per VM
-default_domain_name: "example.com"  # Default domain name for VMs
-default_bridge: "vmbr0"             # Default network bridge
+default_memory_size: 2048                                      # Default VM memory size in MB
+default_disk_size: "30G"                                       # Default VM disk size use +30G to add or 30G to set absolute size
+default_cpu_cores: 2                                           # Default number of CPU cores per VM If ommited will be from tempalte
+default_cpu_sockets: 1                                         # Number of CPU sockets If ommited will be from tempalte.
+default_boot_on_start: yes                                     # Boot VM on start of Proxmox
+default_template_tag: "bookworm"                               # Default VM template tag to find for template clone
+default_pool: "vm_pools"                                       # Default pool for VMs. Set to an empty string or omit for no default pool.
+default_domain_name: "example.com"                             # Default domain name for VMs, this is appended to vm name
+default_bridge: "vmbr0"                                        # Default network bridge
+default_disk: "scsi0"                                          # Default disk from template
+default_validate_certs: "yes"                                  # Default verify proxmox ssl cert yes or no default is false
+preferred_storage_type: 'zfs'                                  # Preferred storage type, e.g., 'zfs', 'lvm', 'iscsi'
+vm_network_vlan: 10                                            # Default VLAN tag empty if not provided
+proxmox_api_url: "https://proxmox1.example.com:8006/api2/json" # Proxmox API URL
+proxmox_api_host: "proxmox1.example.com:8006"                  # do not include https or http
+include_custom_cloud_init: no                                  # Whether to include custom cloud init
+local_cloud_init_path: "/path/to/local/cloud_init_files/"      # Path on shared storage that is available to proxmox cluster # must have ssh root 
+cloud_init_storage_path: "local:snippets/"                     # Proxmox storage name that has snippets defined and is accessable to the cloud-init image
+custom_cloud_init_behavior: "append"                           # Options: "append", "replace" Append will use vendor opbject
+skip_package_check: yes                                        # whether to skip local package install on run or not
 ```
 
 More detailed configurations and examples can be found in the `defaults/main.yml` file.
@@ -50,6 +65,7 @@ Include the role in your playbook and define the necessary variables:
         template_tag: "Ubuntu20.04"
         ipv4: "192.168.1.10"
         vm_network_vlan: 100
+        tags: "tag_with_comma_delimmited,other_tag"
 ```
 
 ## Examples:
