@@ -1,11 +1,4 @@
 ---
-# - name: Reset sorted_nodes in prepare
-#  set_fact:
-#    sorted_nodes:
-#- name: Reset storage_info in prepare
-#  set_fact:
-#    storage_info:
-
 - name: Fetch cluster node information
   uri:
     url: "{{ proxmox_api_url }}/cluster/resources?type=node"
