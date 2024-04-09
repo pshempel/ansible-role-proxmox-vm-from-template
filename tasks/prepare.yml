@@ -6,7 +6,7 @@
     headers:
       Authorization: "PVEAPIToken={{ proxmox_api_token_id }}={{ proxmox_api_token_secret }}"
     return_content: yes
-    validate_certs: "{{ pvm_default_validate_certs | default('no') }}"
+    validate_certs: "{{ pvmt_default_validate_certs | default('no') }}"
   delegate_to: localhost
   register: node_info
 

@@ -11,10 +11,10 @@ default_ipv6: "dhcp"       # Default IPv6 setting
 default_node: "pve4"       # Default Proxmox node
 default_disk: "scsi0"      # Default disk from template
 default_vm_agent: "yes"    # Enable agent on vm
-default_boot_on_start: yes # Boot VM on start of Proxmox
+pvmt_default_boot_on_start: yes # Boot VM on start of Proxmox
 default_start_vm: "no"
-pvm_default_validate_certs: "true"
-default_proxmox_api_timeout: 120  # Defaults to 360 seconds if not set
+pvmt_default_validate_certs: "true"
+pvmt_default_proxmox_api_timeout: 120  # Defaults to 360 seconds if not set
 default_vm_network_vlan: 10        # Default VLAN tag
 default_domain_name: "linuxhardcore.com"
 default_bridge: "vmbr0"
