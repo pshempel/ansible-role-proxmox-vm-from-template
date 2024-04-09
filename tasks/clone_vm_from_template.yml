@@ -38,7 +38,7 @@
 #        if include_custom_cloud_init == 'yes' 
 #        else omit 
 #      }}
-    timeout: "{{ vm_to_clone.default_api_timeout | default(360) }}"  # Extended timeout to accommodate longer clone operations
+    timeout: "{{ default_proxmox_api_timeout | default('360') }}"  # Extended timeout to accommodate longer clone operations
     
   register: clone_results
   when: 

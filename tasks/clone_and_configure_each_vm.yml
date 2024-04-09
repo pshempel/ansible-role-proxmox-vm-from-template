@@ -13,52 +13,49 @@
 - name: Check if VM name or VMID already exists and skip if true
   ansible.builtin.debug:
     msg: "Skipping cloning for '{{ vm_data_to_clone.name }}' because it already exists."
-  when:
-    - vmname_exists[vm_data_to_clone.name] | default(false)
-    - vmid_exists[vm_data_to_clone.name] | default(false)
+  when: vmname_exists[vm_data_to_clone.name] | default(false) or vmid_exists[vm_data_to_clone.name] | default(false)
 
 # Proceed with cloning if VM does not exist
 - block:
     - name: Reset migration completion flag at the start of each iteration
       set_fact:
-       migration_completed: false
+        migration_completed: false
 
-    # Initial preparation and information gathering
     - name: Prepare environment and gather necessary information
       include_tasks: prepare.yml
       vars:
-        vm_to_clone: "{{ vm_data_to_clone }}"    
-     
-    # Check if the template is on the target node and set migration flag
+        vm_to_clone: "{{ vm_data_to_clone }}"
+
     - name: Check if the template is on the target node and set migration flag
       include_tasks: check_template_location.yml
       vars:
         vm_to_clone: "{{ vm_data_to_clone }}"
 
-    # Migrate the template if necessary
     - name: Migrate the template if necessary
       include_tasks: migrate_template_to_target_node.yml
       when: needs_migration
       vars:
-       vm_to_clone: "{{ vm_data_to_clone }}"
-    
-    # Clone VM from template
+        vm_to_clone: "{{ vm_data_to_clone }}"
+
     - name: Clone VM from template
-      include_tasks: clone_vm_from_template.yml 
+      include_tasks: clone_vm_from_template.yml
       vars:
         vm_to_clone: "{{ vm_data_to_clone }}"
 
-    # Configure the cloned VM
     - name: Configure the cloned VM
       include_tasks: configure_cloned_vm.yml
       vars:
         vm_to_clone: "{{ vm_data_to_clone }}"
 
-    # Refresh template location
     - name: Refresh template location
       include_tasks: refresh_template_node_location.yml
       vars:
         vm_to_clone: "{{ vm_data_to_clone }}"
 
-  when: not ( vmid_exists[vm_data_to_clone.name] | default(false) or vmname_exists[vm_data_to_clone.name] | default(false) )
+    - name: Start VM if needed
+      include_tasks: start_vm_after_creation.yml
+      when: (vm_data_to_clone.start_vm | default(default_start_vm)) | bool
+      vars:
+        vm_to_clone: "{{ vm_data_to_clone }}"
 
+  when: not ( vmid_exists[vm_data_to_clone.name] | default(false) or vmname_exists[vm_data_to_clone.name] | default(false) )

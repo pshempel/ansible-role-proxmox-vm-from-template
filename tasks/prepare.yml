@@ -6,12 +6,11 @@
     headers:
       Authorization: "PVEAPIToken={{ proxmox_api_token_id }}={{ proxmox_api_token_secret }}"
     return_content: yes
-    validate_certs: "{{ vm_to_clone.default_validate_certs | default('no') }}"
+    validate_certs: "{{ pvm_default_validate_certs | default('no') }}"
   delegate_to: localhost
   register: node_info
 
 # Calculate free memory for each node and only run when node is not defined in playbook
-
 - name: Calculate free memory for each node
   set_fact:
     nodes_with_free_mem: "{{ nodes_with_free_mem | default([]) + 
@@ -55,3 +54,10 @@
   ansible.builtin.debug:
     msg: "Playbook has requested {{ vm_data_to_clone.node }} to place  {{ vm_data_to_clone.name }}"
   when: vm_data_to_clone.node is defined
+  
+- name: Storage picked by task and chosen node for best resources
+  ansible.builtin.debug:
+    msg: "The Node with most resources {{ vm_target_node}} to place VM name {{ vm_data_to_clone.name }} on storage {{ best_storage }}"
+  # when: vm_data_to_clone.node is defined
+
+  

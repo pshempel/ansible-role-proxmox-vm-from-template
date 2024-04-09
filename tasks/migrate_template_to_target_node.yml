@@ -29,7 +29,7 @@
         "target": "{{ migration_target_node }}"
       }
     status_code: [200, 202]
-    validate_certs: "{{ vm_to_clone.default_validate_certs | default('no') }}"
+    validate_certs: "{{ pvm_default_validate_certs | default('no') }}"
   register: migration_response
   when:
     - template_current_node != migration_target_node
@@ -42,7 +42,7 @@
     headers:
       Authorization: "PVEAPIToken={{ proxmox_api_token_id }}={{ proxmox_api_token_secret }}"
     return_content: yes
-    validate_certs: "{{ vm_to_clone.default_validate_certs | default('no') }}"
+    validate_certs: "{{ pvm_default_validate_certs | default('no') }}"
   register: migration_status
   until: migration_status.json.data.status == "stopped"
   retries: 60

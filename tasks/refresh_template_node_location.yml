@@ -18,11 +18,10 @@
       headers:
         Authorization: "PVEAPIToken={{ proxmox_api_token_id }}={{ proxmox_api_token_secret }}"
       return_content: yes
-      validate_certs: "{{ vm_to_clone.default_validate_certs | default('no') }}"
+      validate_certs: "{{ vm_to_clone.pvm_default_validate_certs | default('no') }}"
     register: refreshed_template_info
     delegate_to: localhost
   when: needs_migration and migration_completed
-    # when: needs_migration
 
 - name: Update template_current_node based on refreshed information
   set_fact:
@@ -31,7 +30,6 @@
      | list | first).node }}"
   when:
      - needs_migration and migration_completed
-     # - needs_migration
      - refreshed_template_info is defined
      - refreshed_template_info.json.data | selectattr('vmid', 'equalto', selected_template_vmid | int) | list | length > 0
 ####

@@ -27,7 +27,9 @@
 # Verify when we are passed a VMID that it does not already exist
 - name: Check for Duplicate VMID when provided from playbook
   include_tasks: check_for_duplicate_vmid_vmname.yml
-
+  vars:
+    vm_to_clone: "{{ vm_data_to_clone }}"
+    
 - name: Separate VMs by defined and undefined 'node' attributes
   set_fact:
     vms_with_defined_node: "{{ vms | selectattr('node', 'defined') | list }}"
