@@ -5,7 +5,7 @@
     method: GET
     headers:
       Authorization: "PVEAPIToken={{ proxmox_api_token_id }}={{ proxmox_api_token_secret }}"
-    validate_certs: "{{ vm_to_clone.default_validate_certs | default('no') }}"
+    validate_certs: "{{ pvm_default_validate_certs | default('no') }}"
     return_content: yes
   register: vm_info
   delegate_to: localhost
