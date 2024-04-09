@@ -13,8 +13,8 @@ default_disk: "scsi0"      # Default disk from template
 default_vm_agent: "yes"    # Enable agent on vm
 default_boot_on_start: yes # Boot VM on start of Proxmox
 default_start_vm: "no"
-default_validate_certs: "True"
-default_api_timeout: 120  # Defaults to 360 seconds if not set
+pvm_default_validate_certs: "true"
+default_proxmox_api_timeout: 120  # Defaults to 360 seconds if not set
 default_vm_network_vlan: 10        # Default VLAN tag
 default_domain_name: "linuxhardcore.com"
 default_bridge: "vmbr0"
