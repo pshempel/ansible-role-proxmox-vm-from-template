@@ -1,7 +1,7 @@
 # Start the VM if default_start_vm is set to yes
 - block:
-    - name: Start VM
-      community.general.proxmox_kvm:
+  - name: Start VM
+    community.general.proxmox_kvm:
       api_user: "{{ proxmox_api_token_id.split('!')[0] }}"
       api_token_id: "{{ proxmox_api_token_id.split('!')[1] }}"
       api_token_secret: "{{ proxmox_api_token_secret }}"
@@ -10,9 +10,9 @@
       vmid: "{{ clone_results.vmid }}"
       state: started
 
-      # Check the VM state
-    - name: Start VM
-      community.general.proxmox_kvm:
+  # Check the VM state
+  - name: Start VM
+    community.general.proxmox_kvm:
       api_user: "{{ proxmox_api_token_id.split('!')[0] }}"
       api_token_id: "{{ proxmox_api_token_id.split('!')[1] }}"
       api_token_secret: "{{ proxmox_api_token_secret }}"
@@ -20,9 +20,10 @@
       node: "{{ vm_target_node }}"
       vmid: "{{ clone_results.vmid }}"
       state: current
-      register: state
-    
-    - name: Debug vm state
-      ansible.builtin.debug:
-        var: state  
-  when: vm_to_clone.default_start_vm | default('no') lower == 'yes'
+    register: state
+  
+  - name: Debug vm state
+    ansible.builtin.debug:
+      var: state  
+  when: (vm_data_to_clone.start_vm | default(default_start_vm)) | bool
+
