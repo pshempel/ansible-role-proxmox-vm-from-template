@@ -17,15 +17,15 @@ pvmt_default_domain_name: "linuxhardcore.com"
 pvmt_default_proxmox_bridge: "vmbr0"
 pvmt_preferred_storage_type: 'zfs'  # Preferred storage type, e.g., 'zfs', 'lvm', 'iscsi'
 # Settings for cloud-init
-default_ipv4: "dhcp"       # Default IPv4 setting
-default_ipv6: "dhcp"       # Default IPv6 setting
+pvmt_default_cloudinit_ipv4: "dhcp"       # Default IPv4 setting
+pvmt_default_cloudinit_ipv6: "dhcp"       # Default IPv6 setting
 default_node: "pve4"       # Default Proxmox node
 # This is the path on the cluster local system
-local_cloud_init_path: "/path/to/local/cloud_init_files/"
-cloud_init_storage_path: "local:snippets/"
-include_custom_cloud_init: no
-custom_cloud_init_behavior: "append"  # Options: "append", "replace"
-skip_package_check: yes # whether to skip local package install on run or not
+pvmt_include_custom_cloud_init: no       # This set to now will ignore all other cloud init settings
+pvmt_local_node_cloud_init_path: "/path/to/local/cloud_init_files/"
+pvmt_cloud_init_proxmox_storage_path: "local:snippets/"
+pvmt_cloud_init_config_behavior: "append"  # Options: "append", "replace"
+pvmt_skip_package_check: yes # whether to skip local package install on run or not
 
 proxmox_api_url: "https://pve4.linuxhardcore.com:8006/api2/json" # Proxmox API URL
 proxmox_api_host: "pve4.linuxhardcore.com:8006" # do not include https or http
