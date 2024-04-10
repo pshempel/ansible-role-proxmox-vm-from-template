@@ -63,13 +63,13 @@ Include the role in your playbook and define the necessary variables:
       # You must have the following in your secrets file, use ansible-vault to encyrpt 
       # proxmox_api_token_id "username@pve!token_id   # format is  user@realm!tokenid
       # proxmox_api_token_secret                      # token secret provided by proxmox
-    - vars/proxmox_secrets.yml                         # Contains encrypted API credentials
+    - vars/proxmox_secrets.yml                        # Contains encrypted API credentials
       # Fill in the above from defaults/main.yml to overide defaults 
     - vars/defaults.yml                                # Over Ride defaults in role
   vars:
     vms:
       - name: "webserver"
-        node: "auto"                                   # Use 'auto' for dynamic node selection
+        node: "auto"                                  # Use 'auto' for dynamic node selection
         memory: 4096
         disk_size: "50G"
         template_tag: "Ubuntu2004"                    # Tag to search for on the tamplate
@@ -102,15 +102,15 @@ Deploying multiple VMs with different configurations:
   vars:
     vms:
       - name: "appserver"
-        template_tag: "Ubuntu2004"  # what is the tag on the tempate to clone
+        template_tag: "Ubuntu2004"              # what is the tag on the tempate to clone
         memory: 4096
         cores: 4
         vm_network_vlan: 200
       - name: "testserver"
         template_tag: "CentOS8"
         memory: 2048
-        tag: "debian12,webserver,cloud-init"     #tag to apply to the vm after cloneing
-        vmid: 150                                # Specify VMID directly if you don't want proxmox to use the next vmid
+        tag: "debian12,webserver,cloud-init"     # Tag to apply to the vm after cloneing
+        vmid: 150                                # Specify VMID directly if you don't want proxmox to use the next vmid, will be skipped if exists
 ```
 
 ## License:
