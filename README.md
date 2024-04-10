@@ -104,7 +104,7 @@ Deploying multiple VMs with different configurations:
   vars:
     vms:
       - name: "appserver"
-        template_tag: "Ubuntu2004"              # what is the tag on the tempate to clone
+        template_tag: "Ubuntu2004"                # what is the tag on the tempate to clone
         memory: 4096
         cores: 4
         vm_network_vlan: 200
@@ -112,12 +112,11 @@ Deploying multiple VMs with different configurations:
         template_tag: "CentOS8"
         memory: 2048
         proxmox_pool: "developers_pool"
-        vm_tags: "debian12,webserver,cloud-init"     # Tag to apply to the vm after cloneing
-        vmid: 150                                # Specify VMID directly if you don't want proxmox to use the next vmid, will be skipped if exists
+        vm_tags: "debian12,webserver,cloud-init"  # Tag to apply to the vm after cloneing
+        vmid: 150                                 # Specify VMID directly if you don't want proxmox to use the next vmid, will be skipped if exists
 ```
 
 ## License:
-
  License GPL-2.0-or-later
 
 ## Author Information:
