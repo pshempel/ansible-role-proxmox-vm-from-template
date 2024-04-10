@@ -25,5 +25,5 @@
   - name: Debug vm state
     ansible.builtin.debug:
       var: state  
-  when: (vm_data_to_clone.start_vm | default(pvmt_default_start_vm_now)) | bool
+  when: (vm_data_to_clone.start_vm_now | default(pvmt_default_start_vm_now)) | bool
 

@@ -11,7 +11,7 @@
     cores: "{{ vm_to_clone.cores | default(pvmt_default_cpu_cores) }}"
     sockets: "{{ vm_to_clone.sockets | default(pvmt_default_cpu_sockets) }}"
     onboot: "{{ vm_to_clone.boot_on_start | default(pvmt_default_boot_on_start) }}"
-    tags: "{{ vm_to_clone.tags | default(omit)}}"
+    tags: "{{ vm_to_clone.vm_tags | default(omit)}}"
     agent: "{{ vm_to_clone.agent | default(pvmt_default_vm_agent) }}"
     update: true
   when: vm_to_clone.state | default('present') == 'present'

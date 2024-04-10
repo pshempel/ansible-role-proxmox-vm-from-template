@@ -4,7 +4,7 @@
 # Install required local packages
 - name: Install local packages needed for this role
   import_tasks: install_required_local_packages.yml
-  when: not ( skip_package_check )
+  when: not ( pvmt_skip_package_check )
 
 # Verifying and selecting the desired template based on a tag or criterion
 - name: Verify and select the desired template exists
