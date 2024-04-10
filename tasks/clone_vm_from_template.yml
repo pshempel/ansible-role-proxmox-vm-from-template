@@ -11,9 +11,9 @@
     msg: > 
      "Creating from cloned VMID {{ selected_template_vmid }} with new vm with ID {{ vm_to_clone.vmid 
      | default('Automatically assigned by Proxmox') }} and name {{ vm_to_clone.name }}.{{ vm_to_clone.domain_name 
-     | default(default_domain_name) }} 
+     | default(pvmt_default_domain_name) }} 
       on node {{ vm_target_node }} on storage {{ best_storage.storage }} and pool {{ vm_to_clone.pool 
-     | default(default_pool | default(omit)) }} "
+     | default(pvmt_default_proxmox_pool | default(omit)) }} "
 
 - name: Clone VM from template if it does not exist
   community.general.proxmox_kvm:
@@ -24,9 +24,9 @@
     node: "{{ vm_to_clone.node | default(vm_target_node) }}"
     vmid: "{{ selected_template_vmid }}"
     newid: "{{ vm_to_clone.vmid | default(omit) }}"
-    name: "{{ vm_to_clone.name }}.{{ vm_to_clone.domain_name | default(default_domain_name) }}"
+    name: "{{ vm_to_clone.name }}.{{ vm_to_clone.domain_name | default(pvmt_default_domain_name) }}"
     clone: yes
-    pool: "{{ vm_to_clone.pool | default(default_pool | default(omit)) }}"
+    pool: "{{ vm_to_clone.pool | default(pvmt_default_proxmox_pool | default(omit)) }}"
     full: yes
     storage: "{{ best_storage.storage }}"
 # This is for the cloud init section, will be completed after fixing other issues

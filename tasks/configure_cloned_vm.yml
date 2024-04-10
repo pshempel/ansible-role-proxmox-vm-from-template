@@ -7,11 +7,12 @@
     api_host: "{{ proxmox_api_host }}"
     node: "{{ vm_target_node }}"
     vmid: "{{ clone_results.vmid }}"
-    memory: "{{ vm_to_clone.memory | default(default_memory_size) }}"
-    cores: "{{ vm_to_clone.cores | default(default_cpu_cores) }}"
-    sockets: "{{ vm_to_clone.sockets | default(default_cpu_sockets) }}"
+    memory: "{{ vm_to_clone.memory | default(pvmt_default_memory_size) }}"
+    cores: "{{ vm_to_clone.cores | default(pvmt_default_cpu_cores) }}"
+    sockets: "{{ vm_to_clone.sockets | default(pvmt_default_cpu_sockets) }}"
     onboot: "{{ vm_to_clone.boot_on_start | default(pvmt_default_boot_on_start) }}"
     tags: "{{ vm_to_clone.tags | default(omit)}}"
+    agent: "{{ vm_to_clone.agent | default(pvmt_default_vm_agent) }}"
     update: true
   when: vm_to_clone.state | default('present') == 'present'
 
@@ -23,12 +24,12 @@
     api_host: "{{ proxmox_api_host }}"
     vmid: "{{ clone_results.vmid }}"
     storage: "{{ vm_to_clone.disk_storage | default('iscsi0') }}"
-    disk: "{{ vm_to_clone.disk | default(default_disk) }}"
-    size: "{{ vm_to_clone.disk_size  | default(default_disk_size) }}"
+    disk: "{{ vm_to_clone.disk | default(pvmt_default_vm_disk) }}"
+    size: "{{ vm_to_clone.disk_size  | default(pvmt_default_disk_size) }}"
     state: resized
   when:
     - vm_to_clone.state | default('present') == 'present'
-    - (default_disk_size is defined or vm_to_clone.disk_size is defined)
+    - (pvmt_default_disk_size is defined or vm_to_clone.disk_size is defined)
 
 # Update VM network settings using proxmox_nic
 - name: Update VM network settings
@@ -40,9 +41,9 @@
     vmid: "{{ clone_results.vmid }}"
     interface: "net0"
     bridge: "{{ vm_to_clone.bridge | default('vmbr0') }}"
-    tag: "{{ vm_to_clone.vm_network_vlan | default(default_vm_network_vlan, true) }}"
+    tag: "{{ vm_to_clone.vm_network_vlan | default(pvmt_default_vm_network_vlan, true) }}"
     firewall: "1"
     state: present
   when:
   - vm_to_clone.state | default('present') == 'present'
-  - (default_vm_network_vlan is defined or vm_to_clone.vm_network_vlan is defined)
+  - (pvmt_default_vm_network_vlan is defined or vm_to_clone.vm_network_vlan is defined)

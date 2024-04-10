@@ -43,7 +43,7 @@
 
 - name: Filter and sort storages by preferred type and available space
   set_fact:
-    preferred_storages: "{{ storage_info.results | map(attribute='json.data') | flatten | selectattr('type', 'equalto', preferred_storage_type) | sort(attribute='avail', reverse=true) }}"
+    preferred_storages: "{{ storage_info.results | map(attribute='json.data') | flatten | selectattr('type', 'equalto', pvmt_preferred_storage_type) | sort(attribute='avail', reverse=true) }}"
 
 - name: Determine the best storage considering preferred type
   set_fact:

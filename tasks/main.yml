@@ -10,7 +10,7 @@
 - name: Verify and select the desired template exists
   import_tasks: verify_template_exists.yml
   vars:
-    template_tag: "{{ default_template_tag }}"
+    template_tag: "{{ pvmt_default_template_tag }}"
 
 # Pick the correct template for cloning
 - name: Select the template
@@ -22,7 +22,7 @@
 - name: Verify and select the desired template exists
   import_tasks: verify_template_exists.yml
   vars:
-    template_tag: "{{ default_template_tag }}"
+    template_tag: "{{ pvmt_default_template_tag }}"
 
 # Verify when we are passed a VMID that it does not already exist
 - name: Check for Duplicate VMID when provided from playbook

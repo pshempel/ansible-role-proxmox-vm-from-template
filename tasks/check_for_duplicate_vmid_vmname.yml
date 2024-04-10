@@ -12,7 +12,7 @@
 #  Verify we are not attempting to create or update an existing VM Name
 - name: Check if provided VM name exists
   set_fact:
-    vmname_exists: "{{ vmname_exists | default({}) | combine({ item.name: (item.name + '.' + (item.domain_name | default(default_domain_name))) in all_vms.json.data | map(attribute='name') | list }) }}"
+    vmname_exists: "{{ vmname_exists | default({}) | combine({ item.name: (item.name + '.' + (item.domain_name | default(pvmt_default_domain_name))) in all_vms.json.data | map(attribute='name') | list }) }}"
   loop: "{{ vms }}"
   loop_control:
     loop_var: item
