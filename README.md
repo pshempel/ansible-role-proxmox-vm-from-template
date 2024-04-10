@@ -34,7 +34,7 @@ pvmt_default_domain_name: "example.com"                        # Default domain 
 pvmt_default_proxmox_bridge: "vmbr0"                           # Default network bridge
 pvmt_default_vm_disk: "scsi0"                                  # Default disk from template
 pvmt_default_validate_certs: "yes"                             # Default verify proxmox ssl cert yes or no default is false
-pvmt_default_start_vm_now: "no"                                # Whether to start VM once template is cloned and configured
+pvmt_default_vm_start_now: "no"                                # Whether to start VM once template is cloned and configured
 pvmt_default_vm_agent: "no"                                    # Enable agent on vm
 pvmt_preferred_storage_type: 'zfs'                             # Preferred storage type, e.g., 'zfs', 'lvm', 'iscsi'
 pvmt_default_vm_network_vlan: 10                               # Default VLAN tag empty if not provided
@@ -76,7 +76,7 @@ Include the role in your playbook and define the necessary variables:
         template_tag: "Ubuntu2004"                    # Tag to search for on the tamplate
         ipv4: "192.168.1.10"                          # For cloud init
         vm_network_vlan: 100
-        start_vm_now: true                            # whether to start vm after creation, overides default
+        vm_start_now: true                            # whether to start vm after creation, overides default
         vm_tags: "tag-with-comma-delimmited,other-tag"   # Tags cannot have spaces or underscores "_" or periods "."
 ```
 
@@ -111,6 +111,7 @@ Deploying multiple VMs with different configurations:
       - name: "testserver"
         template_tag: "CentOS8"
         memory: 2048
+        proxmox_pool: "developers_pool"
         vm_tags: "debian12,webserver,cloud-init"     # Tag to apply to the vm after cloneing
         vmid: 150                                # Specify VMID directly if you don't want proxmox to use the next vmid, will be skipped if exists
 ```

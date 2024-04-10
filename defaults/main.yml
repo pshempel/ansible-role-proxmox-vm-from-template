@@ -9,10 +9,10 @@ pvmt_default_proxmox_pool: "Virtual_Machines"  # Default pool for VMs. Set to an
 pvmt_default_vm_disk: "scsi0"      # Default disk from template
 pvmt_default_vm_agent: "yes"    # Enable agent on vm
 pvmt_default_boot_on_start: yes # Boot VM on start of Proxmox
-pvmt_default_start_vm_now: "no"
+pvmt_default_vm_start_now: "no"
 pvmt_default_validate_certs: "true"
 pvmt_default_proxmox_api_timeout: 120  # Defaults to 360 seconds if not set
-pvmt_default_vm_network_vlan: 10        # Default VLAN tag
+pvmt_default_vm_network_vlan: 0        # Default VLAN tag # Zero is empty 
 pvmt_default_domain_name: "linuxhardcore.com"
 pvmt_default_proxmox_bridge: "vmbr0"
 pvmt_preferred_storage_type: 'zfs'  # Preferred storage type, e.g., 'zfs', 'lvm', 'iscsi'

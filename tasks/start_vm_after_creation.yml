@@ -1,4 +1,4 @@
-# Start the VM if pvmt_default_start_vm_now is set to yes
+# Start the VM if pvmt_default_vm_start_now is set to yes
 - block:
   - name: Start VM
     community.general.proxmox_kvm:
@@ -25,5 +25,5 @@
   - name: Debug vm state
     ansible.builtin.debug:
       var: state  
-  when: (vm_data_to_clone.start_vm_now | default(pvmt_default_start_vm_now)) | bool
+  when: (vm_data_to_clone.vm_start_now | default(pvmt_default_vm_start_now)) | bool
 

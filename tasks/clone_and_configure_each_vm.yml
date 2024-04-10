@@ -64,7 +64,7 @@
 
     - name: Start VM if needed
       include_tasks: start_vm_after_creation.yml
-      when: (vm_data_to_clone.start_vm_now | default(pvmt_default_start_vm_now)) | bool
+      when: (vm_data_to_clone.vm_start_now | default(pvmt_default_vm_start_now)) | bool
       vars:
         vm_to_clone: "{{ vm_data_to_clone }}"
 

@@ -46,4 +46,4 @@
     state: present
   when:
   - vm_to_clone.state | default('present') == 'present'
-  - (pvmt_default_vm_network_vlan is defined or vm_to_clone.vm_network_vlan is defined)
+  - (pvmt_default_vm_network_vlan | default(0) | int > 0) or (vm_to_clone.vm_network_vlan | default(0) | int > 0)
