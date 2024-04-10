@@ -75,7 +75,7 @@ Include the role in your playbook and define the necessary variables:
         disk_size: "50G"
         template_tag: "Ubuntu2004"                    # Tag to search for on the tamplate
         ipv4: "192.168.1.10"                          # For cloud init
-        pvmt_default_vm_network_vlan: 100
+        vm_network_vlan: 100
         start_vm_now: true                            # whether to start vm after creation, overides default
         vm_tags: "tag-with-comma-delimmited,other-tag"   # Tags cannot have spaces or underscores "_" or periods "."
 ```
