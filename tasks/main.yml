@@ -31,16 +31,16 @@
     vm_to_clone: "{{ vm_data_to_clone }}"
     
 - name: Separate VMs by defined and undefined 'node' attributes
-  set_fact:
+  ansible.builtin.set_fact:
     vms_with_defined_node: "{{ vms | selectattr('node', 'defined') | list }}"
     vms_without_defined_node: "{{ vms | rejectattr('node', 'defined') | list }}"
 
 - name: Group and sort VMs with defined nodes by node name
-  set_fact:
+  ansible.builtin.set_fact:
     grouped_and_sorted_vms: "{{ vms_with_defined_node | groupby('node') | sort(attribute='0') | map('last') | flatten }}"
 
 - name: Combine the lists to maintain sorting and handle undefined nodes
-  set_fact:
+  ansible.builtin.set_fact:
     sorted_vms: "{{ grouped_and_sorted_vms + vms_without_defined_node }}"
   # If you prefer VMs without a defined node to be processed first, swap the order in the concatenation.
 

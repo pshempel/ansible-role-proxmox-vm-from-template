@@ -4,7 +4,7 @@
     msg: "Requested (vm_to_clone.node) node for vm is: {{ vm_to_clone.node | default('not provided in playbook') }}. Target node is: {{ vm_target_node }}."
 
 - name: Determine the template migration target node
-  set_fact:
+  ansible.builtin.set_fact:
     migration_target_node: "{{ vm_to_clone.node | default(vm_target_node) }}"
   when: vm_to_clone.node is defined or vm_target_node is defined
 
@@ -53,6 +53,6 @@
     - "'data' in migration_response.json"
 
 - name: Set migration completion flag
-  set_fact:
+  ansible.builtin.set_fact:
     migration_completed: true
   when: migration_response is defined and (migration_response.status in [200, 202])

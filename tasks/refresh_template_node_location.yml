@@ -1,14 +1,16 @@
 
 - name: Debug selected_tempalte_vmid migration_completed and template_current_node
-  debug:
+  ansible.builtin.debug:
      msg: >
       Template VMID for reresh is: {{ selected_template_vmid }}
       Migration was completed: {{ migration_completed }}
       And migration is needed: {{ needs_migration }}
+  when:
+    - pvmt_debug_mode_enable
 
 - block:
   - name: Reset template_current_node to null
-    set_fact:
+    ansible.builtin.set_fact:
       template_current_node: ""
 
   - name: Refresh template current node after migration
@@ -24,7 +26,7 @@
   when: needs_migration and migration_completed
 
 - name: Update template_current_node based on refreshed information
-  set_fact:
+  ansible.builtin.set_fact:
     template_current_node: "{{ (refreshed_template_info.json.data
      | selectattr('vmid', 'equalto', selected_template_vmid | int)
      | list | first).node }}"
@@ -34,16 +36,22 @@
      - refreshed_template_info.json.data | selectattr('vmid', 'equalto', selected_template_vmid | int) | list | length > 0
 ####
 - name: Debug API response for refreshed template info
-  debug:
+  ansible.builtin.debug:
     var: refreshed_template_info
+  when:
+    - pvmt_debug_mode_enable
 
 - name: Debug refreshed template info template_current_node
-  debug:
+  ansible.builtin.debug:
     var: template_current_node
+  when:
+    - pvmt_debug_mode_enable
 
 - name: Debug refreshed template info on refreshed_template_info.json.data
-  debug:
+  ansible.builtin.debug:
     var: refreshed_template_info.json.data
+  when:
+    - pvmt_debug_mode_enable
 
 # - name: Ensure template_current_node is defined
 #  fail:

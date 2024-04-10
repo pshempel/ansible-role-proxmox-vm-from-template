@@ -39,6 +39,7 @@ pvmt_default_vm_agent: "no"                                    # Enable agent on
 pvmt_preferred_storage_type: 'zfs'                             # Preferred storage type, e.g., 'zfs', 'lvm', 'iscsi'
 pvmt_default_vm_network_vlan: 10                               # Default VLAN tag empty if not provided
 pvmt_default_proxmox_api_timeout: 360                          # Set how long to wait for Proxmox to timeout during api calls
+pvmt_debug_mode_enable: false
 include_custom_cloud_init: no                                  # Whether to include custom cloud init
 local_cloud_init_path: "/path/to/local/cloud_init_files/"      # Path on shared storage that is available to proxmox cluster # must have ssh root 
 cloud_init_storage_path: "local:snippets/"                     # Proxmox storage name that has snippets defined and is accessable to the cloud-init image

@@ -8,17 +8,27 @@
 - name: Debug vm_data_to_clone variable in tasks clone_and_configure_each_vm
   ansible.builtin.debug:
     var: vm_data_to_clone
+  when:
+    - pvmt_debug_mode_enable
 
 # Initial verification to skip cloning if VM already exists
+#- name: Check if VM name or VMID already exists and skip if true
+#  ansible.builtin.debug:
+#    msg: "Skipping cloning for '{{ vm_data_to_clone.name }}' because it already exists."
+#  when: vmname_exists[vm_data_to_clone.name] | default(false) or vmid_exists[vm_data_to_clone.name] | default(false)
+
 - name: Check if VM name or VMID already exists and skip if true
   ansible.builtin.debug:
-    msg: "Skipping cloning for '{{ vm_data_to_clone.name }}' because it already exists."
+    msg: >
+      {% set vmid_msg = "VMID: " + (vmid_exists[vm_data_to_clone.name] | string) if vmid_exists[vm_data_to_clone.name] is defined else "" %}
+      {% set vmname_msg = "VM name: " + (vmname_exists[vm_data_to_clone.name] | string) if vmname_exists[vm_data_to_clone.name] is defined else "" %}
+      Skipping cloning for '{{ vm_data_to_clone.name }}' because it already exists. {{ vmid_msg }} {{ vmname_msg }}
   when: vmname_exists[vm_data_to_clone.name] | default(false) or vmid_exists[vm_data_to_clone.name] | default(false)
 
 # Proceed with cloning if VM does not exist
 - block:
     - name: Reset migration completion flag at the start of each iteration
-      set_fact:
+      ansible.builtin.set_fact:
         migration_completed: false
 
     - name: Prepare environment and gather necessary information

@@ -1,11 +1,15 @@
 - name: Debug selected_template_vmid
   ansible.builtin.debug:
     msg: "Cloning from template VMID: {{ selected_template_vmid }}"
+  when:
+    - pvmt_debug_mode_enable
 
 - name: Debug vm_to_clone variable at start of clone task
   ansible.builtin.debug:
     var: vm_to_clone
-
+  when:
+    - pvmt_debug_mode_enable
+  
 - name: Debug new VMID and Name
   ansible.builtin.debug:
     msg: > 
@@ -49,4 +53,6 @@
 - name: Debug clone operation result
   ansible.builtin.debug:
     var: clone_results
+  when:
+    - pvmt_debug_mode_enable
   

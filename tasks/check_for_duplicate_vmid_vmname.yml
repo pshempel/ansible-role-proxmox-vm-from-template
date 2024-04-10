@@ -11,7 +11,7 @@
   
 #  Verify we are not attempting to create or update an existing VM Name
 - name: Check if provided VM name exists
-  set_fact:
+  ansible.builtin.set_fact:
     vmname_exists: "{{ vmname_exists | default({}) | combine({ item.name: (item.name + '.' + (item.domain_name | default(pvmt_default_domain_name))) in all_vms.json.data | map(attribute='name') | list }) }}"
   loop: "{{ vms }}"
   loop_control:
@@ -19,7 +19,7 @@
   
 # Set vmid_exists True if it does exits
 - name: Check if provided VMID exists
-  set_fact:
+  ansible.builtin.set_fact:
     vmid_exists: "{{ vmid_exists | default({}) | combine({ item.vmid: (item.vmid is defined and item.vmid|string in all_vms.json.data | map(attribute='vmid') | map('string') | list) }) }}"
   loop: "{{ vms }}"
   loop_control:
@@ -29,7 +29,12 @@
 - name: Debug vmname_exists check results
   ansible.builtin.debug:
     var: vmname_exists
+  when:
+      - pvmt_debug_mode_enable
 
 - name: Debug vmid_exists check results
   ansible.builtin.debug:
     var: vmid_exists
+  when:
+      - pvmt_debug_mode_enable
+  
