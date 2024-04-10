@@ -111,7 +111,7 @@ Deploying multiple VMs with different configurations:
       - name: "testserver"
         template_tag: "CentOS8"
         memory: 2048
-        tag: "debian12,webserver,cloud-init"     # Tag to apply to the vm after cloneing
+        vm_tags: "debian12,webserver,cloud-init"     # Tag to apply to the vm after cloneing
         vmid: 150                                # Specify VMID directly if you don't want proxmox to use the next vmid, will be skipped if exists
 ```
 
