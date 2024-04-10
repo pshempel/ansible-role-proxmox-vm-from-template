@@ -42,8 +42,8 @@ pvmt_default_proxmox_api_timeout: 360                          # Set how long to
 include_custom_cloud_init: no                                  # Whether to include custom cloud init
 local_cloud_init_path: "/path/to/local/cloud_init_files/"      # Path on shared storage that is available to proxmox cluster # must have ssh root 
 cloud_init_storage_path: "local:snippets/"                     # Proxmox storage name that has snippets defined and is accessable to the cloud-init image
-custom_cloud_init_behavior: "append"                           # Options: "append", "replace" Append will use vendor opbject
-skip_package_check: yes                                        # whether to skip local package install on run or not
+custom_cloud_init_behavior: "append"                           # Options: "append", "replace" Append will use vendor object
+pvmt_skip_package_check: yes                                        # whether to skip local package install on run or not
 proxmox_api_url: "https://proxmox1.example.com:8006/api2/json" # Proxmox API URL
 proxmox_api_host: "proxmox1.example.com:8006"                  # do not include https or http
 ```
@@ -75,7 +75,8 @@ Include the role in your playbook and define the necessary variables:
         template_tag: "Ubuntu2004"                    # Tag to search for on the tamplate
         ipv4: "192.168.1.10"                          # For cloud init
         pvmt_default_vm_network_vlan: 100
-        tags: "tag-with-comma-delimmited,other-tag"   # Tags cannot have spaces or underscores "_" or periods "."
+        start_vm_now: true                            # whether to start vm after creation, overides default
+        vm_tags: "tag-with-comma-delimmited,other-tag"   # Tags cannot have spaces or underscores "_" or periods "."
 ```
 
 ## Examples:
