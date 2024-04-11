@@ -13,6 +13,7 @@
 
 - name: Debug the determined template migration target node
   ansible.builtin.debug:
+
     msg: "Determined template migration target node: {{ migration_target_node | default('Migration Target Node not determined
       yet') }}"
 
