@@ -17,8 +17,10 @@
 - name: Debug vm_to_clone.node and vm_target_node
   ansible.builtin.debug:
     msg: >
-      In Check Template location: Requested node for vm is: {{ vm_to_clone.node | default('Was not provided in playbook') }}.
-      Target node is: {{ vm_target_node }}. Template current node is: {{ template_current_node | default('is not defined') }}.
+      In Check Template location: Requested node for vm is: {{ vm_to_clone.node | default('Was not provided in playbook')
+      }}.
+      Target node is: {{ vm_target_node }}. Template current node is: {{ template_current_node | default('is not defined')
+      }}.
       Needs migration is set to {{ needs_migration | default('Not determined yet') }}.
 
 - name: Debug message if template is on the correct node

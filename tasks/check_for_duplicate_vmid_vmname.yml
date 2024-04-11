@@ -1,12 +1,14 @@
 ---
 # tasks/check_for_duplicate_vmid_vmname.yml
+# trunk-ignore(checkov/CKV2_ANSIBLE_1)
+# trunk-ignore(checkov/CKV_ANSIBLE_1)
 - name: Fetch VMs and templates from Proxmox for duplicate checks
   ansible.builtin.uri:
     url: "{{ proxmox_api_url }}/cluster/resources?type=vm"
     method: GET
     headers:
-      Authorization: "PVEAPIToken={{ proxmox_api_token_id }}={{ proxmox_api_token_secret }}"
-    return_content: yes
+      Authorization: PVEAPIToken={{ proxmox_api_token_id }}={{ proxmox_api_token_secret }}
+    return_content: true
     validate_certs: "{{ pvmt_default_validate_certs | default('no') }}"
   register: all_vms
   delegate_to: localhost
@@ -14,7 +16,9 @@
 #  Verify we are not attempting to create or update an existing VM Name
 - name: Check if provided VM name exists
   ansible.builtin.set_fact:
-   vmname_exists: "{{ vmname_exists | default({}) | combine({ item.name: (item.name + '.' + (item.domain_name | default(pvmt_default_domain_name))) in all_vms.json.data | map(attribute='name') | list }) }}"
+    vmname_exists:
+      "{{ vmname_exists | default({}) | combine({item.name: (item.name + '.' + (item.domain_name | default(pvmt_default_domain_name)))
+      in all_vms.json.data | map(attribute='name') | list}) }}"
   loop: "{{ vms }}"
   loop_control:
     loop_var: item
@@ -22,7 +26,9 @@
 # Set vmid_exists True if it does exits
 - name: Check if provided VMID exists
   ansible.builtin.set_fact:
-   vmid_exists: "{{ vmid_exists | default({}) | combine({ item.vmid: (item.vmid is defined and item.vmid|string in all_vms.json.data | map(attribute='vmid') | map('string') | list) }) }}"
+    vmid_exists:
+      "{{ vmid_exists | default({}) | combine({item.vmid: (item.vmid is defined and item.vmid | string in all_vms.json.data
+      | map(attribute='vmid') | map('string') | list)}) }}"
   loop: "{{ vms }}"
   loop_control:
     loop_var: item

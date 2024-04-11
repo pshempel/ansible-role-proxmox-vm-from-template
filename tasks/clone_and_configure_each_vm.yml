@@ -10,22 +10,25 @@
   when:
     - pvmt_debug_mode_enable
 
-# Initial verification to skip cloning if VM already exists
 # - name: Check if VM name or VMID already exists and skip if true
 #  ansible.builtin.debug:
 #    msg: "Skipping cloning for '{{ vm_data_to_clone.name }}' because it already exists."
 #  when: vmname_exists[vm_data_to_clone.name] | default(false) or vmid_exists[vm_data_to_clone.name] | default(false)
-
+# Initial verification to skip cloning if VM already exists
 - name: Check if VM name or VMID already exists and skip if true
   ansible.builtin.debug:
     msg: >
-      {% set vmid_msg = "VMID: " + (vmid_exists[vm_data_to_clone.name] | string) if vmid_exists[vm_data_to_clone.name] is defined else "" %}
-      {% set vmname_msg = "VM name: " + (vmname_exists[vm_data_to_clone.name] | string) if vmname_exists[vm_data_to_clone.name] is defined else "" %}
+      {% set vmid_msg = "VMID: " + (vmid_exists[vm_data_to_clone.name] | string) if vmid_exists[vm_data_to_clone.name] is
+      defined else "" %}
+      {% set vmname_msg = "VM name: " + (vmname_exists[vm_data_to_clone.name] | string) if vmname_exists[vm_data_to_clone.name]
+      is defined else "" %}
       Skipping cloning for '{{ vm_data_to_clone.name }}' because it already exists. {{ vmid_msg }} {{ vmname_msg }}
   when: vmname_exists[vm_data_to_clone.name] | default(false) or vmid_exists[vm_data_to_clone.name] | default(false)
 
 # Proceed with cloning if VM does not exist
-- block:
+- name: Run tasks for VM creation conditionally
+  when: not ( vmid_exists[vm_data_to_clone.name] | default(false) or vmname_exists[vm_data_to_clone.name] | default(false) )
+  block:
     - name: Reset migration completion flag at the start of each iteration
       ansible.builtin.set_fact:
         migration_completed: false
@@ -66,5 +69,3 @@
       when: (vm_data_to_clone.vm_start_now | default(pvmt_default_vm_start_now)) | bool
       vars:
         vm_to_clone: "{{ vm_data_to_clone }}"
-
-  when: not ( vmid_exists[vm_data_to_clone.name] | default(false) or vmname_exists[vm_data_to_clone.name] | default(false) )

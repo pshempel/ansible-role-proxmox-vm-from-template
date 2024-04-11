@@ -2,39 +2,41 @@
 # tasks/refresh_template_node_location.yml
 - name: Debug selected_tempalte_vmid migration_completed and template_current_node
   ansible.builtin.debug:
-     msg: >
+    msg: >
       Template VMID for reresh is: {{ selected_template_vmid }}
       Migration was completed: {{ migration_completed }}
       And migration is needed: {{ needs_migration }}
   when:
     - pvmt_debug_mode_enable
 
-- block:
-  - name: Reset template_current_node to null
-    ansible.builtin.set_fact:
-      template_current_node: ""
-
-  - name: Refresh template current node after migration
-    ansible.builtin.uri:
-      url: "{{ proxmox_api_url }}/cluster/resources?type=vm"
-      method: GET
-      headers:
-        Authorization: "PVEAPIToken={{ proxmox_api_token_id }}={{ proxmox_api_token_secret }}"
-      return_content: yes
-      validate_certs: "{{ vm_to_clone.pvmt_default_validate_certs | default('no') }}"
-    register: refreshed_template_info
-    delegate_to: localhost
+- name: Clear template_current_node and the find the template afressh
   when: needs_migration and migration_completed
+  block:
+    - name: Reset template_current_node to null
+      ansible.builtin.set_fact:
+        template_current_node: ""
+    # trunk-ignore(checkov/CKV_ANSIBLE_1)
+    # trunk-ignore(checkov/CKV2_ANSIBLE_1)
+    - name: Refresh template current node after migration
+      ansible.builtin.uri:
+        url: "{{ proxmox_api_url }}/cluster/resources?type=vm"
+        method: GET
+        headers:
+          Authorization: PVEAPIToken={{ proxmox_api_token_id }}={{ proxmox_api_token_secret }}
+        return_content: true
+        validate_certs: "{{ vm_to_clone.pvmt_default_validate_certs | default('no') }}"
+      register: refreshed_template_info
+      delegate_to: localhost
 
 - name: Update template_current_node based on refreshed information
   ansible.builtin.set_fact:
-    template_current_node: "{{ (refreshed_template_info.json.data
-     | selectattr('vmid', 'equalto', selected_template_vmid | int)
-     | list | first).node }}"
+    template_current_node:
+      "{{ (refreshed_template_info.json.data | selectattr('vmid', 'equalto', selected_template_vmid |
+      int) | list | first).node }}"
   when:
-     - needs_migration and migration_completed
-     - refreshed_template_info is defined
-     - refreshed_template_info.json.data | selectattr('vmid', 'equalto', selected_template_vmid | int) | list | length > 0
+    - needs_migration and migration_completed
+    - refreshed_template_info is defined
+    - refreshed_template_info.json.data | selectattr('vmid', 'equalto', selected_template_vmid | int) | list | length > 0
 ####
 - name: Debug API response for refreshed template info
   ansible.builtin.debug:
@@ -53,7 +55,6 @@
     var: refreshed_template_info.json.data
   when:
     - pvmt_debug_mode_enable
-
 # - name: Ensure template_current_node is defined
 #  fail:
 #    msg: "'template_current_node' is not defined or is empty. Ensure it's correctly set before proceeding."

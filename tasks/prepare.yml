@@ -1,12 +1,14 @@
 ---
 # tasks/prepare.yml
+# trunk-ignore(checkov/CKV2_ANSIBLE_1)
+# trunk-ignore(checkov/CKV_ANSIBLE_1)
 - name: Fetch cluster node information
   ansible.builtin.uri:
     url: "{{ proxmox_api_url }}/cluster/resources?type=node"
     method: GET
     headers:
-      Authorization: "PVEAPIToken={{ proxmox_api_token_id }}={{ proxmox_api_token_secret }}"
-    return_content: yes
+      Authorization: PVEAPIToken={{ proxmox_api_token_id }}={{ proxmox_api_token_secret }}
+    return_content: true
     validate_certs: "{{ pvmt_default_validate_certs | default('no') }}"
   delegate_to: localhost
   register: node_info
@@ -14,52 +16,59 @@
 # Calculate free memory for each node and only run when node is not defined in playbook
 - name: Calculate free memory for each node
   ansible.builtin.set_fact:
-    nodes_with_free_mem: "{{ nodes_with_free_mem | default([]) +
-      [{ 'node': item.node,
-      'mem_free': item.maxmem - item.mem,
-      'maxcpu': item.maxcpu,
-      'maxdisk': item.maxdisk }] }}"
+    nodes_with_free_mem:
+      "{{ nodes_with_free_mem | default([]) + [{'node': item.node, 'mem_free': item.maxmem - item.mem,
+      'maxcpu': item.maxcpu, 'maxdisk': item.maxdisk}] }}"
   loop: "{{ node_info.json.data }}"
   when: item.type == 'node' # Ensure we're only dealing with node objects
 
 - name: Sort nodes by available memory
   ansible.builtin.set_fact:
     # sorted_nodes: "{{ nodes_with_free_mem | sort(attribute='mem_free', reverse=true) | map(attribute='node') | list }}"
-    sorted_nodes: "{{ ([vm_data_to_clone.node] if vm_data_to_clone.node is defined else nodes_with_free_mem | sort(attribute='mem_free', reverse=true) | map(attribute='node') | list) }}"
+    sorted_nodes:
+      "{{ ([vm_data_to_clone.node] if vm_data_to_clone.node is defined else nodes_with_free_mem | sort(attribute='mem_free',
+      reverse=true) | map(attribute='node') | list) }}"
 
 - name: Set target node for VM deployment based on available memory
   ansible.builtin.set_fact:
     vm_target_node: "{{ vm_data_to_clone.node | default(sorted_nodes | first) }}"
 
+# trunk-ignore(checkov/CKV2_ANSIBLE_1)
 - name: Fetch storage information for each node
   ansible.builtin.uri:
     url: "{{ proxmox_api_url }}/nodes/{{ item }}/storage"
     method: GET
     headers:
-      Authorization: "PVEAPIToken={{ proxmox_api_token_id }}={{ proxmox_api_token_secret }}"
-    return_content: yes
+      Authorization: PVEAPIToken={{ proxmox_api_token_id }}={{ proxmox_api_token_secret }}
+    return_content: true
   loop: "{{ sorted_nodes }}"
   register: storage_info
   delegate_to: localhost
 
 - name: Filter and sort storages by preferred type and available space
   ansible.builtin.set_fact:
-    preferred_storages: "{{ storage_info.results | map(attribute='json.data') | flatten | selectattr('type', 'equalto', pvmt_preferred_storage_type) | sort(attribute='avail', reverse=true) }}"
+    preferred_storages:
+      "{{ storage_info.results | map(attribute='json.data') | flatten | selectattr('type', 'equalto', pvmt_preferred_storage_type)
+      | sort(attribute='avail', reverse=true) }}"
 
 - name: Determine the best storage considering preferred type
   ansible.builtin.set_fact:
-    best_storage: "{{ preferred_storages | first | default(storage_info.results | map(attribute='json.data') | flatten | sort(attribute='avail', reverse=true) | first) }}"
+    best_storage:
+      "{{ preferred_storages | first | default(storage_info.results | map(attribute='json.data') | flatten | sort(attribute='avail',
+      reverse=true) | first) }}"
 
 # Debug target node based on vm_data_to_clone.node
 - name: Debug vm_data_to_clone.node showing requested node from playbook
   ansible.builtin.debug:
-    msg: "Playbook has requested {{ vm_data_to_clone.node }} to place  {{ vm_data_to_clone.name }}"
+    msg: Playbook has requested {{ vm_data_to_clone.node }} to place  {{ vm_data_to_clone.name }}
   when:
     - vm_data_to_clone.node is defined
     - pvmt_debug_mode_enable
 
 - name: Storage picked by task and chosen node for best resources
   ansible.builtin.debug:
-    msg: "The Node with most resources {{ vm_target_node}} to place VM name {{ vm_data_to_clone.name }} on storage {{ best_storage }}"
+    msg:
+      The Node with most resources {{ vm_target_node }} to place VM name {{ vm_data_to_clone.name }} on storage {{ best_storage
+      }}
   when:
     - pvmt_debug_mode_enable
