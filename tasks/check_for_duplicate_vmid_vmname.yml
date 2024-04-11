@@ -1,3 +1,5 @@
+---
+# tasks/check_for_duplicate_vmid_vmname.yml
 - name: Fetch VMs and templates from Proxmox for duplicate checks
   ansible.builtin.uri:
     url: "{{ proxmox_api_url }}/cluster/resources?type=vm"

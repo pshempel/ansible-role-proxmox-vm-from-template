@@ -1,4 +1,6 @@
 ---
+# tasks/verify_template_exists.yml
+# Template fetcher
 - name: Fetch all VMs and templates from Proxmox
   ansible.builtin.uri:
     url: "{{ proxmox_api_url }}/cluster/resources?type=vm"

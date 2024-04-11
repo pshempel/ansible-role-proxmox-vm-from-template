@@ -1,3 +1,6 @@
+---
+# tasks/verify_ssh.yml
+# verify ssh works for node system changes
 - name: Verify SSH access and write permission
   ansible.builtin.command: touch /path/to/shared/storage/test_permission_file
   delegate_to: "{{ node }}"

@@ -1,6 +1,5 @@
 ---
 # tasks/clone_and_configure_each_vm.yml
-
 # This set of tasks is passed vm_data_to_clone, we then assign this to vm_to_clone due
 # to Ansibles way of passing values to task from within taks
 

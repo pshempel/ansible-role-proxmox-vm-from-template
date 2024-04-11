@@ -1,4 +1,5 @@
 ---
+# tasks/refresh_template_node_location.yml
 - name: Debug selected_tempalte_vmid migration_completed and template_current_node
   ansible.builtin.debug:
      msg: >

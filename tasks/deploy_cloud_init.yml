@@ -1,3 +1,4 @@
+---
 # tasks/deploy_cloud_init.yml
 - name: Generate Cloud-Init config for VM
   template:

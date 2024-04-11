@@ -1,3 +1,5 @@
+---
+# tasks/clone_vm_from_template.yml
 - name: Debug selected_template_vmid
   ansible.builtin.debug:
     msg: "Cloning from template VMID: {{ selected_template_vmid }}"

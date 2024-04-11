@@ -1,6 +1,5 @@
 ---
 # tasks/main.yml
-
 # Install required local packages
 - name: Install local packages needed for this role
   ansible.builtin.import_tasks: install_required_local_packages.yml

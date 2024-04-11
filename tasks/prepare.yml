@@ -1,4 +1,5 @@
 ---
+# tasks/prepare.yml
 - name: Fetch cluster node information
   ansible.builtin.uri:
     url: "{{ proxmox_api_url }}/cluster/resources?type=node"

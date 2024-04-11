@@ -1,4 +1,5 @@
 ---
+# tasks/configure_cloned_vm.yml
 - name: Configure network settings and modify storage and memory for deployed VMs
   community.general.proxmox_kvm:
     api_user: "{{ proxmox_api_token_id.split('!')[0] }}"
