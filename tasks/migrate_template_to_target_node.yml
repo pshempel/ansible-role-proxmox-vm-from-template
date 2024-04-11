@@ -13,12 +13,12 @@
     msg: "Determined template migration target node: {{ migration_target_node  | default('Migration Target Node not determined yet') }}"
 
 - name: Ensure template_current_node is defined
-  fail:
+  ansible.builtin.fail:
     msg: "'template_current_node' is not defined or is empty. Ensure it's correctly set before proceeding."
   when: template_current_node is not defined or template_current_node | trim == ""
 
 - name: Migrate the template to the requested node
-  uri:
+  ansible.builtin.uri:
     url: "{{ proxmox_api_url }}/nodes/{{ template_current_node }}/qemu/{{ selected_template_vmid }}/migrate"
     method: POST
     headers:
@@ -36,7 +36,7 @@
     - migration_target_node is defined
 
 - name: Wait for the template migration task to complete
-  uri:
+  ansible.builtin.uri:
     url: "{{ proxmox_api_url }}/nodes/{{ template_current_node }}/tasks/{{ migration_response.json.data }}/status"
     method: GET
     headers:

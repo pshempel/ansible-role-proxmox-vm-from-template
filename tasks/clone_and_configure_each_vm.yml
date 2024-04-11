@@ -32,38 +32,38 @@
         migration_completed: false
 
     - name: Prepare environment and gather necessary information
-      include_tasks: prepare.yml
+      ansible.builtin.include_tasks: prepare.yml
       vars:
         vm_to_clone: "{{ vm_data_to_clone }}"
 
     - name: Check if the template is on the target node and set migration flag
-      include_tasks: check_template_location.yml
+      ansible.builtin.include_tasks: check_template_location.yml
       vars:
         vm_to_clone: "{{ vm_data_to_clone }}"
 
     - name: Migrate the template if necessary
-      include_tasks: migrate_template_to_target_node.yml
+      ansible.builtin.include_tasks: migrate_template_to_target_node.yml
       when: needs_migration
       vars:
         vm_to_clone: "{{ vm_data_to_clone }}"
 
     - name: Clone VM from template
-      include_tasks: clone_vm_from_template.yml
+      ansible.builtin.include_tasks: clone_vm_from_template.yml
       vars:
         vm_to_clone: "{{ vm_data_to_clone }}"
 
     - name: Configure the cloned VM
-      include_tasks: configure_cloned_vm.yml
+      ansible.builtin.include_tasks: configure_cloned_vm.yml
       vars:
         vm_to_clone: "{{ vm_data_to_clone }}"
 
     - name: Refresh template location
-      include_tasks: refresh_template_node_location.yml
+      ansible.builtin.include_tasks: refresh_template_node_location.yml
       vars:
         vm_to_clone: "{{ vm_data_to_clone }}"
 
     - name: Start VM if needed
-      include_tasks: start_vm_after_creation.yml
+      ansible.builtin.include_tasks: start_vm_after_creation.yml
       when: (vm_data_to_clone.vm_start_now | default(pvmt_default_vm_start_now)) | bool
       vars:
         vm_to_clone: "{{ vm_data_to_clone }}"

@@ -1,5 +1,5 @@
 - name: Fetch VMs and templates from Proxmox for duplicate checks
-  uri:
+  ansible.builtin.uri:
     url: "{{ proxmox_api_url }}/cluster/resources?type=vm"
     method: GET
     headers:

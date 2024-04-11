@@ -1,6 +1,6 @@
 ---
 - name: Fetch all VMs and templates from Proxmox
-  uri:
+  ansible.builtin.uri:
     url: "{{ proxmox_api_url }}/cluster/resources?type=vm"
     method: GET
     headers:
@@ -11,7 +11,7 @@
   delegate_to: localhost
 
 - name: Verify if the desired template exists
-  assert:
+  ansible.builtin.assert:
     that:
       - >-
         vm_info.json.data | 

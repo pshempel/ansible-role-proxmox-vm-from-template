@@ -3,30 +3,30 @@
 
 # Install required local packages
 - name: Install local packages needed for this role
-  import_tasks: install_required_local_packages.yml
+  ansible.builtin.import_tasks: install_required_local_packages.yml
   when: not ( pvmt_skip_package_check )
 
 # Verifying and selecting the desired template based on a tag or criterion
 - name: Verify and select the desired template exists
-  import_tasks: verify_template_exists.yml
+  ansible.builtin.import_tasks: verify_template_exists.yml
   vars:
     template_tag: "{{ pvmt_default_template_tag }}"
 
 # Pick the correct template for cloning
 - name: Select the template
-  include_tasks: select_template.yml
+  ansible.builtin.include_tasks: select_template.yml
   vars:
     vm_to_clone: "{{ vm_data_to_clone }}"
 
 # Verifying and selecting the desired template based on a tag or criterion
 - name: Verify and select the desired template exists
-  import_tasks: verify_template_exists.yml
+  ansible.builtin.import_tasks: verify_template_exists.yml
   vars:
     template_tag: "{{ pvmt_default_template_tag }}"
 
 # Verify when we are passed a VMID that it does not already exist
 - name: Check for Duplicate VMID when provided from playbook
-  include_tasks: check_for_duplicate_vmid_vmname.yml
+  ansible.builtin.include_tasks: check_for_duplicate_vmid_vmname.yml
   vars:
     vm_to_clone: "{{ vm_data_to_clone }}"
     
@@ -39,14 +39,15 @@
   ansible.builtin.set_fact:
     grouped_and_sorted_vms: "{{ vms_with_defined_node | groupby('node') | sort(attribute='0') | map('last') | flatten }}"
 
+# If you prefer VMs without a defined node to be processed first, swap the order in the concatenation.
 - name: Combine the lists to maintain sorting and handle undefined nodes
   ansible.builtin.set_fact:
     sorted_vms: "{{ grouped_and_sorted_vms + vms_without_defined_node }}"
-  # If you prefer VMs without a defined node to be processed first, swap the order in the concatenation.
+
 
 # Need to change variable when including an include, prevent scope issues
 - name: Clone and configure VMs sequentially
-  include_tasks: clone_and_configure_each_vm.yml 
+  ansible.builtin.include_tasks: clone_and_configure_each_vm.yml 
   loop: "{{ sorted_vms }}"
   loop_control:
     loop_var: vm_data_to_clone

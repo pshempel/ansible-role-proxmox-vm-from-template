@@ -1,6 +1,6 @@
 ---
 - name: Fetch cluster node information
-  uri:
+  ansible.builtin.uri:
     url: "{{ proxmox_api_url }}/cluster/resources?type=node"
     method: GET
     headers:
@@ -31,7 +31,7 @@
     vm_target_node: "{{ vm_data_to_clone.node | default(sorted_nodes | first) }}"
 
 - name: Fetch storage information for each node
-  uri:
+  ansible.builtin.uri:
     url: "{{ proxmox_api_url }}/nodes/{{ item }}/storage"
     method: GET
     headers:

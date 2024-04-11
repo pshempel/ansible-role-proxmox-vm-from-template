@@ -2,6 +2,7 @@ galaxy_info:
   author: Philip S. Hempel
   description: Create VM from Proxmox Template for a Proxmox cluster
   company: Linux SRC
+  role_name: proxmox-vm-from-template
 
   # If the issue tracker for your role is not on github, uncomment the
   # next line and provide a value

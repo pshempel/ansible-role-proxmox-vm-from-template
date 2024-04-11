@@ -14,7 +14,7 @@
       template_current_node: ""
 
   - name: Refresh template current node after migration
-    uri:
+    ansible.builtin.uri:
       url: "{{ proxmox_api_url }}/cluster/resources?type=vm"
       method: GET
       headers:
