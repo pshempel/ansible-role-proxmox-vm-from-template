@@ -4,5 +4,9 @@
     "files.insertFinalNewline": true,
     "files.trimFinalNewlines": true,
     "files.trimTrailingWhitespace": true,
-    "editor.bracketPairColorization.independentColorPoolPerBracketType": true
+    "editor.bracketPairColorization.independentColorPoolPerBracketType": true,
+    "files.associations": {
+        "*.yml": "ansible",
+        "*.j2": "ansible-jinga"
+    }
 }
