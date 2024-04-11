@@ -8,7 +8,7 @@
     validate_certs: "{{ pvmt_default_validate_certs | default('no') }}"
   register: all_vms
   delegate_to: localhost
-  
+
 #  Verify we are not attempting to create or update an existing VM Name
 - name: Check if provided VM name exists
   ansible.builtin.set_fact:
@@ -16,7 +16,7 @@
   loop: "{{ vms }}"
   loop_control:
     loop_var: item
-  
+
 # Set vmid_exists True if it does exits
 - name: Check if provided VMID exists
   ansible.builtin.set_fact:
@@ -37,4 +37,3 @@
     var: vmid_exists
   when:
       - pvmt_debug_mode_enable
-  

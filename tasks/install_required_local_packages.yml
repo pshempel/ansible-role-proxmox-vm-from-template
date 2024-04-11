@@ -19,4 +19,4 @@
 #      - python3-proxmoxer
 #      - python3-requests
 #    state: present
-#  when: ansible_facts['os_family'] == "RHEL" 
+#  when: ansible_facts['os_family'] == "RHEL"

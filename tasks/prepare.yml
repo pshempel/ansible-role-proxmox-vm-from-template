@@ -13,8 +13,8 @@
 # Calculate free memory for each node and only run when node is not defined in playbook
 - name: Calculate free memory for each node
   ansible.builtin.set_fact:
-    nodes_with_free_mem: "{{ nodes_with_free_mem | default([]) + 
-                              [{ 'node': item.node, 
+    nodes_with_free_mem: "{{ nodes_with_free_mem | default([]) +
+                              [{ 'node': item.node,
                                 'mem_free': item.maxmem - item.mem,
                                 'maxcpu': item.maxcpu,
                                 'maxdisk': item.maxdisk }] }}"
@@ -49,16 +49,16 @@
   ansible.builtin.set_fact:
     best_storage: "{{ preferred_storages | first | default(storage_info.results | map(attribute='json.data') | flatten | sort(attribute='avail', reverse=true) | first) }}"
 
-# Debug target node based on vm_data_to_clone.node 
+# Debug target node based on vm_data_to_clone.node
 - name: Debug vm_data_to_clone.node showing requested node from playbook
   ansible.builtin.debug:
     msg: "Playbook has requested {{ vm_data_to_clone.node }} to place  {{ vm_data_to_clone.name }}"
-  when: 
+  when:
     - vm_data_to_clone.node is defined
     - pvmt_debug_mode_enable
-  
+
 - name: Storage picked by task and chosen node for best resources
   ansible.builtin.debug:
     msg: "The Node with most resources {{ vm_target_node}} to place VM name {{ vm_data_to_clone.name }} on storage {{ best_storage }}"
-  when: 
+  when:
     - pvmt_debug_mode_enable

@@ -29,7 +29,7 @@
   ansible.builtin.include_tasks: check_for_duplicate_vmid_vmname.yml
   vars:
     vm_to_clone: "{{ vm_data_to_clone }}"
-    
+
 - name: Separate VMs by defined and undefined 'node' attributes
   ansible.builtin.set_fact:
     vms_with_defined_node: "{{ vms | selectattr('node', 'defined') | list }}"
@@ -47,8 +47,7 @@
 
 # Need to change variable when including an include, prevent scope issues
 - name: Clone and configure VMs sequentially
-  ansible.builtin.include_tasks: clone_and_configure_each_vm.yml 
+  ansible.builtin.include_tasks: clone_and_configure_each_vm.yml
   loop: "{{ sorted_vms }}"
   loop_control:
     loop_var: vm_data_to_clone
-  

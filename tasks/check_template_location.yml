@@ -1,6 +1,6 @@
 # Find the location of the template to clone from and migrate it to the correct node
 
-- name: Reset migration completion 
+- name: Reset migration completion
   ansible.builtin.set_fact:
     migration_needed: false
 
@@ -16,7 +16,7 @@
 - name: Debug vm_to_clone.node and vm_target_node
   ansible.builtin.debug:
     msg: >
-      In Check Template location: Requested node for vm is: {{ vm_to_clone.node | default('Was not provided in playbook') }}. 
+      In Check Template location: Requested node for vm is: {{ vm_to_clone.node | default('Was not provided in playbook') }}.
       Target node is: {{ vm_target_node }}. Template current node is: {{ template_current_node | default('is not defined') }}.
       Needs migration is set to {{ needs_migration | default('Not determined yet') }}.
 
@@ -28,6 +28,6 @@
 - name: Debug message if template needs migration
   ansible.builtin.debug:
     msg: "Template needs to be migrated to the target node: {{ vm_target_node }}"
-  when: 
+  when:
     - needs_migration
     - pvmt_debug_mode_enable

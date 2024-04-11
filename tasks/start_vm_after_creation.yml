@@ -21,9 +21,8 @@
       vmid: "{{ clone_results.vmid }}"
       state: current
     register: state
-  
+
   - name: Debug vm state
     ansible.builtin.debug:
-      var: state  
+      var: state
   when: (vm_data_to_clone.vm_start_now | default(pvmt_default_vm_start_now)) | bool
-
