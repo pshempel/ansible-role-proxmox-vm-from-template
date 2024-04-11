@@ -40,11 +40,11 @@
     api_token_secret: "{{ proxmox_api_token_secret }}"
     api_host: "{{ proxmox_api_host }}"
     vmid: "{{ clone_results.vmid }}"
-    interface: "net0"
+    interface: net0
     bridge: "{{ vm_to_clone.bridge | default('vmbr0') }}"
     tag: "{{ vm_to_clone.vm_network_vlan | default(pvmt_default_vm_network_vlan, true) }}"
     firewall: "1"
     state: present
   when:
-  - vm_to_clone.state | default('present') == 'present'
-  - (pvmt_default_vm_network_vlan | default(0) | int > 0) or (vm_to_clone.vm_network_vlan | default(0) | int > 0)
+    - vm_to_clone.state | default('present') == 'present'
+    - (pvmt_default_vm_network_vlan | default(0) | int > 0) or (vm_to_clone.vm_network_vlan | default(0) | int > 0)

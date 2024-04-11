@@ -43,7 +43,6 @@
   ansible.builtin.set_fact:
     sorted_vms: "{{ grouped_and_sorted_vms + vms_without_defined_node }}"
 
-
 # Need to change variable when including an include, prevent scope issues
 - name: Clone and configure VMs sequentially
   ansible.builtin.include_tasks: clone_and_configure_each_vm.yml

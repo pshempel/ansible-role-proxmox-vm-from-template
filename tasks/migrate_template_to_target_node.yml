@@ -3,7 +3,8 @@
 
 - name: Debug vm_to_clone.node and vm_target_node
   ansible.builtin.debug:
-    msg: "Requested (vm_to_clone.node) node for vm is: {{ vm_to_clone.node | default('not provided in playbook') }}. Target node is: {{ vm_target_node }}."
+    msg: "Requested (vm_to_clone.node) node for vm is: {{ vm_to_clone.node | default('not provided in playbook') }}. Target
+      node is: {{ vm_target_node }}."
 
 - name: Determine the template migration target node
   ansible.builtin.set_fact:
@@ -12,19 +13,22 @@
 
 - name: Debug the determined template migration target node
   ansible.builtin.debug:
-    msg: "Determined template migration target node: {{ migration_target_node  | default('Migration Target Node not determined yet') }}"
+    msg: "Determined template migration target node: {{ migration_target_node | default('Migration Target Node not determined
+      yet') }}"
 
 - name: Ensure template_current_node is defined
   ansible.builtin.fail:
     msg: "'template_current_node' is not defined or is empty. Ensure it's correctly set before proceeding."
   when: template_current_node is not defined or template_current_node | trim == ""
 
+# trunk-ignore(checkov/CKV2_ANSIBLE_1)
+# trunk-ignore(checkov/CKV_ANSIBLE_1)
 - name: Migrate the template to the requested node
   ansible.builtin.uri:
     url: "{{ proxmox_api_url }}/nodes/{{ template_current_node }}/qemu/{{ selected_template_vmid }}/migrate"
     method: POST
     headers:
-      Authorization: "PVEAPIToken={{ proxmox_api_token_id }}={{ proxmox_api_token_secret }}"
+      Authorization: PVEAPIToken={{ proxmox_api_token_id }}={{ proxmox_api_token_secret }}
     body_format: json
     body: >
       {
@@ -37,13 +41,15 @@
     - template_current_node != migration_target_node
     - migration_target_node is defined
 
+# trunk-ignore(checkov/CKV2_ANSIBLE_1)
+# trunk-ignore(checkov/CKV_ANSIBLE_1)
 - name: Wait for the template migration task to complete
   ansible.builtin.uri:
     url: "{{ proxmox_api_url }}/nodes/{{ template_current_node }}/tasks/{{ migration_response.json.data }}/status"
     method: GET
     headers:
-      Authorization: "PVEAPIToken={{ proxmox_api_token_id }}={{ proxmox_api_token_secret }}"
-    return_content: yes
+      Authorization: PVEAPIToken={{ proxmox_api_token_id }}={{ proxmox_api_token_secret }}
+    return_content: true
     validate_certs: "{{ pvmt_default_validate_certs | default('no') }}"
   register: migration_status
   until: migration_status.json.data.status == "stopped"

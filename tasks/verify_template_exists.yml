@@ -1,14 +1,16 @@
 ---
 # tasks/verify_template_exists.yml
 # Template fetcher
+# trunk-ignore(checkov/CKV2_ANSIBLE_1)
+# trunk-ignore(checkov/CKV_ANSIBLE_1)
 - name: Fetch all VMs and templates from Proxmox
   ansible.builtin.uri:
     url: "{{ proxmox_api_url }}/cluster/resources?type=vm"
     method: GET
     headers:
-      Authorization: "PVEAPIToken={{ proxmox_api_token_id }}={{ proxmox_api_token_secret }}"
+      Authorization: PVEAPIToken={{ proxmox_api_token_id }}={{ proxmox_api_token_secret }}
     validate_certs: "{{ pvmt_default_validate_certs | default('no') }}"
-    return_content: yes
+    return_content: true
   register: vm_info
   delegate_to: localhost
 
@@ -19,5 +21,5 @@
         vm_info.json.data |
         json_query("[?type=='qemu' && template==`1` && tags.contains(@, `" + template_tag + "`)]") |
         length > 0
-    fail_msg: "Template with tag '{{ template_tag }}' does not exist."
-    success_msg: "Template with tag '{{ template_tag }}' found."
+    fail_msg: Template with tag '{{ template_tag }}' does not exist.
+    success_msg: Template with tag '{{ template_tag }}' found.

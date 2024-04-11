@@ -1,7 +1,7 @@
 ---
 # tasks/install_required_local_packages.yml
 - name: Gather facts
-  ansible.builtin.setup:  # This is the Ansible module used to gather facts
+  ansible.builtin.setup:   # This is the Ansible module used to gather facts
 - name: Install required Python packages on Debian/Ubuntu
   ansible.builtin.apt:
     name:
@@ -9,7 +9,7 @@
       - python3-requests
       - python3-paramiko
     state: present
-    update_cache: yes
+    update_cache: true
   become: true
   when: ansible_facts['os_family'] == "Debian"
   delegate_to: localhost
