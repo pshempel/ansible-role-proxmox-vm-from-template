@@ -1,19 +1,19 @@
 ---
 # Default VM configurations
-pvmt_default_memory_size: 2048  # MB
-pvmt_default_disk_size: "30G"   # Disk size
-pvmt_default_cpu_sockets: 1     # Number of CPU sockets
-pvmt_default_cpu_cores: 2       # Number of per CPU cores
+pvmt_default_memory_size: 2048         # MB
+pvmt_default_disk_size: "30G"          # Disk size
+pvmt_default_cpu_sockets: 1            # Number of CPU sockets
+pvmt_default_cpu_cores: 2              # Number of per CPU cores
 pvmt_default_template_tag: "bookworm"  # Default VM template tag
-pvmt_default_proxmox_pool: "Virtual_Machines"  # Default pool for VMs. Set to an empty string or omit for no default pool.
-pvmt_default_vm_disk: "scsi0"      # Default disk from template
-pvmt_default_vm_agent: "yes"    # Enable agent on vm
-pvmt_default_boot_on_start: yes # Boot VM on start of Proxmox
+pvmt_default_proxmox_pool: "Virtual_Machines"  # Default pool for VMs. Set to an empty string or omit for no default pool
+pvmt_default_vm_disk: "scsi0"           # Default disk from template
+pvmt_default_vm_agent: "yes"            # Enable agent on vm
+pvmt_default_boot_on_start: true        # Boot VM on start of Proxmox
 pvmt_default_vm_start_now: "no"
 pvmt_default_validate_certs: "true"
 pvmt_default_proxmox_api_timeout: 120  # Defaults to 360 seconds if not set
 pvmt_default_vm_network_vlan: 0        # Default VLAN tag # Zero is empty
-pvmt_default_domain_name: "linuxhardcore.com"
+pvmt_default_domain_name: "your-default-doman.com"
 pvmt_default_proxmox_bridge: "vmbr0"
 pvmt_preferred_storage_type: 'zfs'  # Preferred storage type, e.g., 'zfs', 'lvm', 'iscsi'
 # Settings for cloud-init
@@ -21,11 +21,11 @@ pvmt_default_cloudinit_ipv4: "dhcp"       # Default IPv4 setting
 pvmt_default_cloudinit_ipv6: "dhcp"       # Default IPv6 setting
 default_node: "pve4"       # Default Proxmox node
 # This is the path on the cluster local system
-pvmt_include_custom_cloud_init: no       # This set to now will ignore all other cloud init settings
+pvmt_include_custom_cloud_init: true      # This set to now will ignore all other cloud init settings
 pvmt_local_node_cloud_init_path: "/path/to/local/cloud_init_files/"
 pvmt_cloud_init_proxmox_storage_path: "local:snippets/"
 pvmt_cloud_init_config_behavior: "append"  # Options: "append", "replace"
-pvmt_skip_package_check: yes # whether to skip local package install on run or not
+pvmt_skip_package_check: true              # whether to skip local package install on run or not
 pvmt_debug_mode_enable: false
-proxmox_api_url: "https://pve4.linuxhardcore.com:8006/api2/json" # Proxmox API URL
-proxmox_api_host: "pve4.linuxhardcore.com:8006" # do not include https or http
+proxmox_api_url: "https://your-proxmoxurl.com:8006/api2/json"   # Proxmox API URL
+proxmox_api_host: "your-proxmoxurl.com:8006"                    # do not include https or http

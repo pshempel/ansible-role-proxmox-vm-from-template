@@ -1,3 +1,4 @@
+---
 galaxy_info:
   author: Philip S. Hempel
   description: Create VM from Proxmox Template for a Proxmox cluster
@@ -29,14 +30,14 @@ galaxy_info:
   # https://galaxy.ansible.com/api/v1/platforms/
   #
   platforms:
-   - name: Debian
-     versions:
-     - "bookworm"
-     - "bullseye"
-   - name: Ubuntu
-     versions:
-     - "mantic"
-     - "jammy"
+    - name: Debian
+      versions:
+        - "bookworm"
+        - "bullseye"
+    - name: Ubuntu
+      versions:
+        - "mantic"
+        - "jammy"
 
   galaxy_tags:
     - "Proxmox"
