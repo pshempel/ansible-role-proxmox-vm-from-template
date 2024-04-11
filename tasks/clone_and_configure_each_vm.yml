@@ -12,7 +12,7 @@
     - pvmt_debug_mode_enable
 
 # Initial verification to skip cloning if VM already exists
-#- name: Check if VM name or VMID already exists and skip if true
+# - name: Check if VM name or VMID already exists and skip if true
 #  ansible.builtin.debug:
 #    msg: "Skipping cloning for '{{ vm_data_to_clone.name }}' because it already exists."
 #  when: vmname_exists[vm_data_to_clone.name] | default(false) or vmid_exists[vm_data_to_clone.name] | default(false)

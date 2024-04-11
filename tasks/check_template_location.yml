@@ -1,5 +1,5 @@
 # Find the location of the template to clone from and migrate it to the correct node
-
+---
 - name: Reset migration completion
   ansible.builtin.set_fact:
     migration_needed: false

@@ -1,4 +1,4 @@
-
+---
 - name: Gather facts
   ansible.builtin.setup:  # This is the Ansible module used to gather facts
 - name: Install required Python packages on Debian/Ubuntu

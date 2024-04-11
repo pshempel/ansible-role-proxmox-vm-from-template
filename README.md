@@ -41,7 +41,7 @@ pvmt_default_vm_network_vlan: 10                               # Default VLAN ta
 pvmt_default_proxmox_api_timeout: 360                          # Set how long to wait for Proxmox to timeout during api calls
 pvmt_debug_mode_enable: false
 include_custom_cloud_init: no                                  # Whether to include custom cloud init
-local_cloud_init_path: "/path/to/local/cloud_init_files/"      # Path on shared storage that is available to proxmox cluster # must have ssh root 
+local_cloud_init_path: "/path/to/local/cloud_init_files/"      # Path on shared storage that is available to proxmox cluster # must have ssh root
 cloud_init_storage_path: "local:snippets/"                     # Proxmox storage name that has snippets defined and is accessable to the cloud-init image
 custom_cloud_init_behavior: "append"                           # Options: "append", "replace" Append will use vendor object
 pvmt_skip_package_check: yes                                        # whether to skip local package install on run or not
@@ -61,11 +61,11 @@ Include the role in your playbook and define the necessary variables:
   roles:
     - ansible-role-proxmox-vm-from-template
   vars_files:
-      # You must have the following in your secrets file, use ansible-vault to encyrpt 
+      # You must have the following in your secrets file, use ansible-vault to encyrpt
       # proxmox_api_token_id "username@pve!token_id   # format is  user@realm!tokenid
       # proxmox_api_token_secret                      # token secret provided by proxmox
     - vars/proxmox_secrets.yml                        # Contains encrypted API credentials
-      # Fill in the above from defaults/main.yml to overide defaults 
+      # Fill in the above from defaults/main.yml to overide defaults
     - vars/defaults.yml                                # Over Ride defaults in role
   vars:
     vms:
