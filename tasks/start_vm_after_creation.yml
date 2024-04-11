@@ -1,30 +1,31 @@
 ---
-# tasks/start_vm_after_creation.yml
 # Start the VM if pvmt_default_vm_start_now is set to yes
-- block:
-  - name: Start VM
-    community.general.proxmox_kvm:
-      api_user: "{{ proxmox_api_token_id.split('!')[0] }}"
-      api_token_id: "{{ proxmox_api_token_id.split('!')[1] }}"
-      api_token_secret: "{{ proxmox_api_token_secret }}"
-      api_host: "{{ proxmox_api_host }}"
-      node: "{{ vm_target_node }}"
-      vmid: "{{ clone_results.vmid }}"
-      state: started
+- name: Start VM and verify state
+- when: (vm_data_to_clone.vm_start_now | default(pvmt_default_vm_start_now)) | bool
 
-  # Check the VM state
-  - name: Start VM
-    community.general.proxmox_kvm:
-      api_user: "{{ proxmox_api_token_id.split('!')[0] }}"
-      api_token_id: "{{ proxmox_api_token_id.split('!')[1] }}"
-      api_token_secret: "{{ proxmox_api_token_secret }}"
-      api_host: "{{ proxmox_api_host }}"
-      node: "{{ vm_target_node }}"
-      vmid: "{{ clone_results.vmid }}"
-      state: current
-    register: state
+  block:
+    - name: Start VM
+      community.general.proxmox_kvm:
+        api_user: "{{ proxmox_api_token_id.split('!')[0] }}"
+        api_token_id: "{{ proxmox_api_token_id.split('!')[1] }}"
+        api_token_secret: "{{ proxmox_api_token_secret }}"
+        api_host: "{{ proxmox_api_host }}"
+        node: "{{ vm_target_node }}"
+        vmid: "{{ clone_results.vmid }}"
+        state: started
 
-  - name: Debug vm state
-    ansible.builtin.debug:
-      var: state
-  when: (vm_data_to_clone.vm_start_now | default(pvmt_default_vm_start_now)) | bool
+    # Check the VM state
+    - name: Start VM
+      community.general.proxmox_kvm:
+        api_user: "{{ proxmox_api_token_id.split('!')[0] }}"
+        api_token_id: "{{ proxmox_api_token_id.split('!')[1] }}"
+        api_token_secret: "{{ proxmox_api_token_secret }}"
+        api_host: "{{ proxmox_api_host }}"
+        node: "{{ vm_target_node }}"
+        vmid: "{{ clone_results.vmid }}"
+        state: current
+      register: state
+
+    - name: Debug vm state
+      ansible.builtin.debug:
+        var: state
