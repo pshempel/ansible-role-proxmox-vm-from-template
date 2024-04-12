@@ -3,7 +3,8 @@
 
 - name: Debug vm_to_clone.node and vm_target_node
   ansible.builtin.debug:
-    msg: "Requested (vm_to_clone.node) node for vm is: {{ vm_to_clone.node | default('not provided in playbook') }}. Target
+    msg:
+      "Requested (vm_to_clone.node) node for vm is: {{ vm_to_clone.node | default('not provided in playbook') }}. Target
       node is: {{ vm_target_node }}."
 
 - name: Determine the template migration target node
@@ -13,9 +14,10 @@
 
 - name: Debug the determined template migration target node
   ansible.builtin.debug:
-
-    msg: "Determined template migration target node: {{ migration_target_node | default('Migration Target Node not determined
+    msg:
+      "Determined template migration target node: {{ migration_target_node | default('Migration Target Node not determined
       yet') }}"
+  when: pvmt_debug_mode_enable
 
 - name: Ensure template_current_node is defined
   ansible.builtin.fail:
