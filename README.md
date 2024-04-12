@@ -17,6 +17,7 @@ This Ansible role facilitates the automated deployment and configuration of virt
 - Ansible 2.9 or higher.
 - Access to a Proxmox VE cluster with necessary privileges.
 - Proxmox API tokens for authentication with appropriate permissions.
+- Proxmox VM template with tags assigned to it.
 
 ## Role Variables:
 
