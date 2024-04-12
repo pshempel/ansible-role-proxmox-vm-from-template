@@ -17,8 +17,15 @@ runtimes:
     - python@3.10.8
 # This is the section where you manage your linters. (https://docs.trunk.io/check/configuration)
 lint:
+  triggers:
+    - linters:
+        - ansible-lint
+      paths:
+        - ~/src/local_git/ansible
+      targets:
+        - ~/src/local_git/ansible
   enabled:
-    - ansible-lint@5.3.2
+    - ansible-lint@24.2.2
     - bandit@1.7.8
     - black@24.3.0
     - checkov@3.2.60
@@ -37,10 +44,3 @@ actions:
     - trunk-fmt-pre-commit
   enabled:
     - trunk-upgrade-available
-#  triggers:
-#    - linters:
-#        - ansible-lint
-#      paths:
-#        - ~/src/local_git/ansible # A directory
-#      targets:
-#          - ~/src/local_git/ansible # A directory
