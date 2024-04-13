@@ -60,7 +60,7 @@ Include the role in your playbook and define the necessary variables:
 - hosts: localhost
   gather_facts: no
   roles:
-    - ansible-role-proxmox-vm-from-template
+    - pshempel.proxmox-vm-from-template
   vars_files:
       # You must have the following in your secrets file, use ansible-vault to encyrpt
       # proxmox_api_token_id "username@pve!token_id   # format is  user@realm!tokenid
@@ -88,7 +88,7 @@ Deploying a single VM using defaults but with specific memory size and a custom 
 ```yaml
 - hosts: localhost
   roles:
-    - ansible-role-proxmox-vm-from-template
+    - pshempel.proxmox-vm-from-template
   vars:
     vms:
       - name: "dbserver"
@@ -101,7 +101,7 @@ Deploying multiple VMs with different configurations:
 ```yaml
 - hosts: localhost
   roles:
-    - ansible-role-proxmox-vm-from-template
+    - pshempel.proxmox-vm-from-template
   vars:
     vms:
       - name: "appserver"
