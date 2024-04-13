@@ -45,7 +45,7 @@ include_custom_cloud_init: no                                  # Whether to incl
 local_cloud_init_path: "/path/to/local/cloud_init_files/"      # Path on shared storage that is available to proxmox cluster # must have ssh root
 cloud_init_storage_path: "local:snippets/"                     # Proxmox storage name that has snippets defined and is accessable to the cloud-init image
 custom_cloud_init_behavior: "append"                           # Options: "append", "replace" Append will use vendor object
-pvmt_skip_package_check: yes                                        # whether to skip local package install on run or not
+pvmt_skip_package_check: yes                                   # whether to skip local package install on run or not
 proxmox_api_url: "https://proxmox1.example.com:8006/api2/json" # Proxmox API URL
 proxmox_api_host: "proxmox1.example.com:8006"                  # do not include https or http
 ```
