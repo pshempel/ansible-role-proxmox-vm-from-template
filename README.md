@@ -123,11 +123,11 @@ Deploying multiple VMs with different configurations:
   - Support for additional Cloud-init support will be added; this will require ssh configuration.
   - Verify all required configurations are correct types.
   - Offer an option to provide a regular expression name for "name" and use it to configure vms, the below would create 81 VMs
-  ```yaml
+```yaml
       name: "basename"-[0:3][1][0:9]
       name: "basename"-[0:3][2][0:9]
       name: "basename"-[0:3][3][0:9]
-     ```
+```
 
 ## License:
  License GPL-2.0-or-later
