@@ -1,7 +1,7 @@
 ---
 # Default VM configurations
 pvmt_default_memory_size: 2048         # MB
-pvmt_default_vm_balloon: "{{ pvmt_default_memory_size | default(vm_to_clone.memory) }}"
+pvmt_default_vm_balloon: "{{ vm_to_clone.memory | default(pvmt_default_memory_size) }}"  # set min memory for ballooning
 pvmt_default_disk_size: "30G"          # Disk size
 pvmt_default_cpu_sockets: 1            # Number of CPU sockets
 pvmt_default_cpu_cores: 2              # Number of per CPU cores
