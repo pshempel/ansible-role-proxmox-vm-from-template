@@ -2,6 +2,8 @@
 # Ansible Role: Proxmox VM Deployer from VM Template
 
 This Ansible role facilitates the automated deployment and configuration of virtual machines (VMs) on a Proxmox Virtual Environment (PVE) cluster. It is designed to streamline and standardize the process of VM creation, allowing for both detailed customization and quick setup with sensible defaults.
+The primary purpose of this role is to deply VMS to be used in Kubernetes deployments on Proxmox, where storage and additional disk are usually not needed.
+
 
 ## Features:
 
@@ -18,6 +20,7 @@ This Ansible role facilitates the automated deployment and configuration of virt
 - Access to a Proxmox VE cluster with necessary privileges.
 - Proxmox API tokens for authentication with appropriate permissions.
 - Proxmox VM template with tags assigned to it.
+- Python3 proxmoxer, Python3 request and Python3 paramiko installed on the Ansible execution server.
 
 ## Role Variables:
 
@@ -116,6 +119,9 @@ Deploying multiple VMs with different configurations:
         vm_tags: "debian12,webserver,cloud-init"  # Tag to apply to the vm after cloneing
         vmid: 150                                 # Specify VMID directly if you don't want proxmox to use the next vmid, will be skipped if exists
 ```
+## TODO
+  - Support for additional Cloud-init support will be added; this will require ssh configuration.
+  - Verify all required configurations are correct types.
 
 ## License:
  License GPL-2.0-or-later
