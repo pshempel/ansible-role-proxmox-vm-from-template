@@ -13,7 +13,8 @@
     sockets: "{{ vm_to_clone.sockets | default(pvmt_default_cpu_sockets) }}"
     onboot: "{{ vm_to_clone.boot_on_start | default(pvmt_default_boot_on_start) }}"
     tags: "{{ vm_to_clone.vm_tags | default(omit) }}"
-    agent: "{{ vm_to_clone.agent | default(pvmt_default_vm_agent) }}"
+    agent: "{{ vm_to_clone.vm_agent | default(pvmt_default_vm_agent) }}"
+    balloon: "{{ vm_to_clone.vm_balloon | default(pvmt_default_vm_balloon) }}"
     update: true
   when: vm_to_clone.state | default('present') == 'present'
 
