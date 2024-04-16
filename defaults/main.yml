@@ -28,5 +28,8 @@ pvmt_cloud_init_proxmox_storage_path: "local:snippets/"
 pvmt_cloud_init_config_behavior: "append"  # Options: "append", "replace"
 pvmt_skip_package_check: false              # whether to skip local package install on run or not
 pvmt_debug_mode_enable: false
+# You must put these two lines below in your playbook
+# The settings can be included using vars_files
+# Be sure that you use quotes in your placement
 proxmox_api_url: "https://your-proxmoxurl.com:8006/api2/json"   # Proxmox API URL
 proxmox_api_host: "your-proxmoxurl.com:8006"                    # do not include https or http
