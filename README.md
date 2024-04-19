@@ -5,7 +5,7 @@ This Ansible role facilitates the automated deployment and configuration of virt
 The primary purpose of this role is to deply VMS to be used in Kubernetes deployments on Proxmox, where storage and additional disk are usually not needed.
 
 
-## Features:
+## Features
 
 - **Dynamic VM Placement**: Automatically selects the Proxmox node with the most available resources (memory and CPU) for new VMs.
 - **Template-Based Deployment**: Allows for VM creation based on specified templates, facilitating standardization and rapid deployment.
@@ -14,7 +14,7 @@ The primary purpose of this role is to deply VMS to be used in Kubernetes deploy
 - **Optional VMID Specification**: Automatically uses the next available VMID or allows for manual specification.
 - **Cloud-Init Integration**: Supports cloud-init for additional VM configuration upon boot, such as setting user credentials and running custom scripts.
 
-## Requirements:
+## Requirements
 
 - Ansible 2.9 or higher.
 - Access to a Proxmox VE cluster with necessary privileges.
@@ -22,7 +22,7 @@ The primary purpose of this role is to deply VMS to be used in Kubernetes deploy
 - Proxmox VM template with tags assigned to it.
 - Python3 proxmoxer, Python3 request and Python3 paramiko installed on the Ansible execution server.
 
-## Role Variables:
+## Role Variables
 
 Variables can be defined in the `defaults/main.yml` for global defaults or overridden for specific VMs in the playbook:
 
@@ -55,7 +55,7 @@ proxmox_api_host: "proxmox1.example.com:8006"                  # do not include 
 
 More detailed configurations and examples can be found in the `defaults/main.yml` file.
 
-## Usage:
+## Usage
 
 Include the role in your playbook and define the necessary variables:
 
@@ -84,7 +84,7 @@ Include the role in your playbook and define the necessary variables:
         vm_tags: "tag-with-comma-delimmited,other-tag"   # Tags cannot have spaces or underscores "_" or periods "."
 ```
 
-## Examples:
+## Examples
 
 Deploying a single VM using defaults but with specific memory size and a custom template:
 
@@ -129,9 +129,9 @@ Deploying multiple VMs with different configurations:
       name: "basename"-[0:3][3][0:9]
 ```
 
-## License:
+## License
  License GPL-2.0-or-later
 
-## Author Information:
+## Author Information
 
 This role was created by Chat GPT and Philip S. Hempel.
