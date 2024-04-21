@@ -2,8 +2,7 @@
 # Ansible Role: Proxmox VM Deployer from VM Template
 
 This Ansible role facilitates the automated deployment and configuration of virtual machines (VMs) on a Proxmox Virtual Environment (PVE) cluster. It is designed to streamline and standardize the process of VM creation, allowing for both detailed customization and quick setup with sensible defaults.
-The primary purpose of this role is to deply VMS to be used in Kubernetes deployments on Proxmox, where storage and additional disk are usually not needed.
-
+The primary purpose of this role is to deploy VMS to be used in Kubernetes deployments on Proxmox, where storage and additional disk are usually not needed.
 
 ## Features
 
@@ -17,10 +16,17 @@ The primary purpose of this role is to deply VMS to be used in Kubernetes deploy
 ## Requirements
 
 - Ansible 2.9 or higher.
-- Access to a Proxmox VE cluster with necessary privileges.
+- Access to a _Proxmox VE_ cluster with necessary privileges.
 - Proxmox API tokens for authentication with appropriate permissions.
 - Proxmox VM template with tags assigned to it.
-- Python3 proxmoxer, Python3 request and Python3 paramiko installed on the Ansible execution server.
+- Python3
+
+  - _proxmoxer_
+  - _request_
+  - _paramiko_
+
+- The Python3 must be installed on the Ansible execution server.
+- SSH keys for your cluster when using the cloud-init extender.
 
 ## Role Variables
 
@@ -29,8 +35,8 @@ Variables can be defined in the `defaults/main.yml` for global defaults or overr
 ```yaml
 pvmt_default_memory_size: 2048                                 # Default VM memory size in MB
 pvmt_default_disk_size: "30G"                                  # Default VM disk size use +30G to add or 30G to set absolute size
-pvmt_default_cpu_cores: 2                                      # Default number of CPU cores per VM If ommited will be from tempalte
-pvmt_default_cpu_sockets: 1                                    # Number of CPU sockets If ommited will be from tempalte.
+pvmt_default_cpu_cores: 2                                      # Default number of CPU cores per VM If omitted will be from template
+pvmt_default_cpu_sockets: 1                                    # Number of CPU sockets If omitted will be from template.
 pvmt_default_boot_on_start: yes                                # Boot VM on start of Proxmox
 pvmt_default_template_tag: "bookworm"                          # Default VM template tag to find for template clone
 pvmt_default_proxmox_pool: "vm_pools"                          # Default pool for VMs. Set to an empty string or omit for no default pool.
@@ -40,13 +46,13 @@ pvmt_default_vm_disk: "scsi0"                                  # Default disk fr
 pvmt_default_validate_certs: "yes"                             # Default verify proxmox ssl cert yes or no default is false
 pvmt_default_vm_start_now: "no"                                # Whether to start VM once template is cloned and configured
 pvmt_default_vm_agent: "no"                                    # Enable agent on vm
-pvmt_preferred_storage_type: 'zfs'                             # Preferred storage type, e.g., 'zfs', 'lvm', 'iscsi'
+pvmt_preferred_storage_type: 'zfs'                             # Preferred storage type, e.g., 'zfs', 'lvm', 'iSCSi'
 pvmt_default_vm_network_vlan: 10                               # Default VLAN tag empty if not provided
 pvmt_default_proxmox_api_timeout: 360                          # Set how long to wait for Proxmox to timeout during api calls
 pvmt_debug_mode_enable: false
 include_custom_cloud_init: no                                  # Whether to include custom cloud init
 local_cloud_init_path: "/path/to/local/cloud_init_files/"      # Path on shared storage that is available to proxmox cluster # must have ssh root
-cloud_init_storage_path: "local:snippets/"                     # Proxmox storage name that has snippets defined and is accessable to the cloud-init image
+cloud_init_storage_path: "local:snippets/"                     # Proxmox storage name that has snippets defined and is accessible to the cloud-init image
 custom_cloud_init_behavior: "append"                           # Options: "append", "replace" Append will use vendor object
 pvmt_skip_package_check: yes                                   # whether to skip local package install on run or not
 proxmox_api_url: "https://proxmox1.example.com:8006/api2/json" # Proxmox API URL
@@ -65,11 +71,11 @@ Include the role in your playbook and define the necessary variables:
   roles:
     - pshempel.proxmox-vm-from-template
   vars_files:
-      # You must have the following in your secrets file, use ansible-vault to encyrpt
+      # You must have the following in your secrets file, use ansible-vault to encrypt
       # proxmox_api_token_id "username@pve!token_id   # format is  user@realm!tokenid
       # proxmox_api_token_secret                      # token secret provided by proxmox
     - vars/proxmox_secrets.yml                        # Contains encrypted API credentials
-      # Fill in the above from defaults/main.yml to overide defaults
+      # Fill in the above from defaults/main.yml to override defaults
     - vars/defaults.yml                                # Over Ride defaults in role
   vars:
     vms:
@@ -77,11 +83,11 @@ Include the role in your playbook and define the necessary variables:
         node: "auto"                                  # Use 'auto' for dynamic node selection
         memory: 4096
         disk_size: "50G"
-        template_tag: "Ubuntu2004"                    # Tag to search for on the tamplate
+        template_tag: "Ubuntu2004"                    # Tag to search for on the template
         ipv4: "192.168.1.10"                          # For cloud init
         vm_network_vlan: 100
-        vm_start_now: true                            # whether to start vm after creation, overides default
-        vm_tags: "tag-with-comma-delimmited,other-tag"   # Tags cannot have spaces or underscores "_" or periods "."
+        vm_start_now: true                            # whether to start vm after creation, overrides default
+        vm_tags: "tag-with-comma-delimited,other-tag"   # Tags cannot have spaces or underscores "_" or periods "."
 ```
 
 ## Examples
@@ -108,7 +114,7 @@ Deploying multiple VMs with different configurations:
   vars:
     vms:
       - name: "appserver"
-        template_tag: "Ubuntu2004"                # what is the tag on the tempate to clone
+        template_tag: "Ubuntu2004"                # what is the tag on the template to clone
         memory: 4096
         cores: 4
         vm_network_vlan: 200
@@ -116,20 +122,40 @@ Deploying multiple VMs with different configurations:
         template_tag: "CentOS8"
         memory: 2048
         proxmox_pool: "developers_pool"
-        vm_tags: "debian12,webserver,cloud-init"  # Tag to apply to the vm after cloneing
+        vm_tags: "debian12,webserver,cloud-init"  # Tag to apply to the vm after cloning
         vmid: 150                                 # Specify VMID directly if you don't want proxmox to use the next vmid, will be skipped if exists
-```
+`
 ## TODO
-  - Support for additional Cloud-init support will be added; this will require ssh configuration.
-  - Verify all required configurations are correct types.
-  - Offer an option to provide a regular expression name for "name" and use it to configure vms, the below would create 81 VMs
+
+- Support for additional Cloud-init support will be added; this will require ssh configuration.
+- Verify all required configurations are correct types.
+  - Input validation for incorrectly formatted or missing variables
+  - API connection
+  - ssh keys
+
+- Offer an option to provide a regular expression name for "name" and use it to configure vms, the below would create 120 VMs
+
 ```yaml
-      name: "basename"-[0:3][1][0:9]
-      name: "basename"-[0:3][2][0:9]
-      name: "basename"-[0:3][3][0:9]
+     - name: "basename"
+       extend_basename: [0:3][1][0:9]
+       template_tag: "mytemplate"
+     - name: "basename"
+      # Notice there is not an [] around the 2 the is equal to [2]
+       extend_basename: [0:3]2[0:9]
+       template_tag: "mytemplate"
+     - name: "basename"
+       extend_basename: [0:3][3][0:9]
+       template_tag: "mytemplate"
 ```
 
+ The above would result in names in sequence
+
+- basename-010 ... 319
+- basename-020 ... 329
+- basename-030 ... 339
+
 ## License
+
  License GPL-2.0-or-later
 
 ## Author Information
