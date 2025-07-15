@@ -24,6 +24,15 @@
 #   - vm_agent (not pvmt_default_vm_agent)
 #   - cores (not pvmt_default_cpu_cores)
 #   - sockets (not pvmt_default_cpu_sockets)
+#   - disk (not pvmt_default_vm_disk) - to specify disk device manually
+#
+# Disk Device Auto-Discovery:
+# The role automatically discovers disk devices from cloned VMs to handle different
+# template configurations (scsi0, virtio0, ide0, sata0, etc.).
+# - Auto-discovery runs when disk resize is needed and no explicit disk is specified
+# - Discovers the primary disk device and its storage location from VM config
+# - Falls back to pvmt_default_vm_disk if discovery fails
+# - Override by setting 'disk: virtio0' in per-VM config
 #
 # Default VM configurations
 pvmt_default_memory_size: 2048         # MB
@@ -33,7 +42,7 @@ pvmt_default_cpu_sockets: 1            # Number of CPU sockets
 pvmt_default_cpu_cores: 2              # Number of per CPU cores
 pvmt_default_template_tag: "bookworm"  # Default VM template tag
 pvmt_default_proxmox_pool: "Virtual_Machines"  # Default pool for VMs. Set to an empty string or omit for no default pool
-pvmt_default_vm_disk: "scsi0"           # Default disk from template
+pvmt_default_vm_disk: "scsi0"           # Default disk (fallback if auto-discovery fails)
 pvmt_default_vm_agent: "yes"            # Enable agent on vm
 pvmt_default_boot_on_start: true        # Boot VM on start of Proxmox
 pvmt_default_vm_start_now: "no"

@@ -1,0 +1,67 @@
+---
+# tasks/discover_vm_disks.yml
+# Dynamically discover disk devices from cloned VM configuration
+
+- name: Get cloned VM configuration
+  ansible.builtin.uri:
+    url: "{{ proxmox_api_url }}/nodes/{{ vm_target_node }}/qemu/{{ clone_results.vmid }}/config"
+    method: GET
+    headers:
+      Authorization: "PVEAPIToken={{ proxmox_api_token_id }}={{ proxmox_api_token_secret }}"
+    validate_certs: "{{ pvmt_default_validate_certs | default('no') }}"
+  register: vm_config_result
+
+- name: Debug VM configuration
+  ansible.builtin.debug:
+    var: vm_config_result.json.data
+  when: pvmt_debug_mode_enable | default(false) | bool
+
+# Extract disk devices from VM config
+# Proxmox disk devices can be: ide0-3, scsi0-30, virtio0-15, sata0-5
+- name: Extract disk devices from VM config
+  ansible.builtin.set_fact:
+    vm_disk_devices: >-
+      {{ vm_config_result.json.data | dict2items
+      | selectattr('key', 'match', '^(ide|scsi|virtio|sata)[0-9]+$')
+      | rejectattr('value', 'search', 'media=cdrom')
+      | list }}
+
+- name: Debug discovered disk devices
+  ansible.builtin.debug:
+    msg: |
+      VM: {{ vm_to_clone.name }} (VMID: {{ clone_results.vmid }})
+      Discovered disk devices:
+      {% for disk in vm_disk_devices %}
+      - {{ disk.key }}: {{ disk.value }}
+      {% endfor %}
+  when:
+    - pvmt_debug_mode_enable | default(false) | bool
+    - vm_disk_devices | length > 0
+
+# Select the primary disk (usually the first non-CDROM disk)
+- name: Select primary disk for resize
+  ansible.builtin.set_fact:
+    vm_primary_disk: "{{ vm_disk_devices[0].key if vm_disk_devices | length > 0 else '' }}"
+
+- name: Warn if no disk devices found
+  ansible.builtin.debug:
+    msg: "WARNING: No disk devices found for VM {{ vm_to_clone.name }} (VMID: {{ clone_results.vmid }})"
+  when: vm_disk_devices | length == 0
+
+# Extract storage location from disk value (format: storage:size)
+- name: Extract disk storage location
+  ansible.builtin.set_fact:
+    vm_disk_storage: >-
+      {{ vm_disk_devices[0].value.split(':')[0]
+      if (vm_disk_devices | length > 0 and ':' in vm_disk_devices[0].value)
+      else best_storage.storage }}
+  when: vm_disk_devices | length > 0
+
+- name: Debug selected disk configuration
+  ansible.builtin.debug:
+    msg: |
+      VM: {{ vm_to_clone.name }}
+      Primary disk selected: {{ vm_primary_disk | default('none found') }}
+      Disk storage: {{ vm_disk_storage | default(best_storage.storage) }}
+      Will resize: {{ (pvmt_default_disk_size is defined or vm_to_clone.disk_size is defined) }}
+  when: pvmt_debug_mode_enable | default(false) | bool

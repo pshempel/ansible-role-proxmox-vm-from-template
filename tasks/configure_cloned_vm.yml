@@ -28,12 +28,19 @@
     update: true
   when: vm_to_clone.state | default('present') == 'present'
 
+# Discover disk devices if we need to resize
+- name: Discover VM disk devices
+  ansible.builtin.include_tasks: discover_vm_disks.yml
+  when:
+    - pvmt_default_disk_size is defined or vm_to_clone.disk_size is defined
+    - vm_to_clone.disk is not defined  # Only discover if not explicitly set
+
 - name: Debug disk resize configuration
   ansible.builtin.debug:
     msg: |
       VM: {{ vm_to_clone.name }}
-      Disk resize storage: {{ vm_to_clone.disk_storage | default(best_storage.storage) }} (from: {{ 'vm config' if vm_to_clone.disk_storage is defined else 'best_storage (where VM was cloned)' }})
-      Disk: {{ vm_to_clone.disk | default(pvmt_default_vm_disk) }}
+      Disk resize storage: {{ vm_to_clone.disk_storage | default(vm_disk_storage | default(best_storage.storage)) }} (from: {{ 'vm config' if vm_to_clone.disk_storage is defined else ('discovered from VM' if vm_disk_storage is defined else 'best_storage') }})
+      Disk: {{ vm_to_clone.disk | default(vm_primary_disk | default(pvmt_default_vm_disk)) }} (from: {{ 'vm config' if vm_to_clone.disk is defined else ('discovered' if vm_primary_disk is defined else 'default') }})
       Size: {{ vm_to_clone.disk_size | default(pvmt_default_disk_size) }}
   when:
     - pvmt_debug_mode_enable | default(false) | bool
@@ -46,8 +53,8 @@
     api_token_secret: "{{ proxmox_api_token_secret }}"
     api_host: "{{ proxmox_api_host }}"
     vmid: "{{ clone_results.vmid }}"
-    storage: "{{ vm_to_clone.disk_storage | default(best_storage.storage) }}"
-    disk: "{{ vm_to_clone.disk | default(pvmt_default_vm_disk) }}"
+    storage: "{{ vm_to_clone.disk_storage | default(vm_disk_storage | default(best_storage.storage)) }}"
+    disk: "{{ vm_to_clone.disk | default(vm_primary_disk | default(pvmt_default_vm_disk)) }}"
     size: "{{ vm_to_clone.disk_size | default(pvmt_default_disk_size) }}"
     state: resized
   when:
