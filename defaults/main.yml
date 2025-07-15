@@ -33,3 +33,6 @@ pvmt_debug_mode_enable: false
 # Be sure that you use quotes in your placement
 proxmox_api_url: "https://your-proxmoxurl.com:8006/api2/json"   # Proxmox API URL
 proxmox_api_host: "your-proxmoxurl.com:8006"                    # do not include https or http
+# API authentication - these MUST be provided by the user
+# proxmox_api_token_id: "user@realm!tokenname"  # Example: root@pam!ansible
+# proxmox_api_token_secret: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"  # Token secret
