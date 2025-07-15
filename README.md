@@ -108,6 +108,44 @@ Include the role in your playbook and define the necessary variables:
         vm_tags: "tag-with-comma-delimmited,other-tag"   # Tags cannot have spaces or underscores "_" or periods "."
 ```
 
+## Variable Override Patterns
+
+This role supports three levels of variable precedence:
+
+### 1. Role Defaults (Lowest Priority)
+Set in `defaults/main.yml`, these apply to all VMs unless overridden.
+
+### 2. Playbook-Level Overrides
+Override defaults for all VMs in your playbook:
+
+```yaml
+- hosts: localhost
+  vars:
+    # These override role defaults for ALL VMs
+    pvmt_default_vm_start_now: "yes"        # Start all VMs after creation
+    pvmt_default_memory_size: 4096          # Default 4GB for all VMs
+    pvmt_default_boot_on_start: true        # All VMs boot on Proxmox start
+    pvmt_default_disk_size: "100G"          # Default 100GB disk for all VMs
+    vms:
+      - name: "vm1"  # Uses 4GB memory, 100GB disk, starts after creation
+      - name: "vm2"  # Same defaults apply
+```
+
+### 3. Per-VM Settings (Highest Priority)
+Individual VMs can override any setting using the short form (without `pvmt_default_` prefix):
+
+```yaml
+vms:
+  - name: "special-vm"
+    memory: 8192                # Overrides pvmt_default_memory_size
+    disk_size: "200G"          # Overrides pvmt_default_disk_size
+    vm_start_now: false        # Overrides pvmt_default_vm_start_now
+    boot_on_start: false       # Overrides pvmt_default_boot_on_start
+    cores: 8                   # Overrides pvmt_default_cpu_cores
+    sockets: 2                 # Overrides pvmt_default_cpu_sockets
+    vm_agent: "no"            # Overrides pvmt_default_vm_agent
+```
+
 ## Examples
 
 Deploying a single VM using defaults but with specific memory size and a custom template:
