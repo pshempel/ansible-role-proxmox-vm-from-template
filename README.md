@@ -14,6 +14,30 @@ The primary purpose of this role is to deply VMS to be used in Kubernetes deploy
 - **Optional VMID Specification**: Automatically uses the next available VMID or allows for manual specification.
 - **Cloud-Init Integration**: Supports cloud-init for additional VM configuration upon boot, such as setting user credentials and running custom scripts.
 
+## Template Selection
+
+The role supports flexible template selection using tags:
+
+### Per-VM Template Selection
+Each VM can specify its own `template_tag` to use a specific template:
+
+```yaml
+vms:
+  - name: "ubuntu-server"
+    template_tag: "ubuntu-template"  # Uses template tagged with 'ubuntu-template'
+  - name: "debian-server"
+    template_tag: "bookworm"        # Uses template tagged with 'bookworm'
+```
+
+### Template Tag Matching
+- Templates must be marked as templates in Proxmox (`template: 1`)
+- Templates are identified by their tags field
+- Multiple tags per template are supported (separated by semicolons)
+- If multiple templates have the same tag, the first one (sorted lexicographically) is used
+
+### Fallback Behavior
+If a VM doesn't specify a `template_tag`, it uses `pvmt_default_template_tag` (default: "bookworm")
+
 ## Requirements
 
 - Ansible 2.9 or higher.
