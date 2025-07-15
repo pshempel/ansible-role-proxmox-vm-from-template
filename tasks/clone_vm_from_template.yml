@@ -2,7 +2,7 @@
 # tasks/clone_vm_from_template.yml
 - name: Debug selected_template_vmid
   ansible.builtin.debug:
-    msg: "Cloning from template VMID: {{ selected_template_vmid }}"
+    msg: "Cloning from template VMID: {{ vm_selected_template_vmid | default(selected_template_vmid) }}"
   when:
     - pvmt_debug_mode_enable
 
@@ -15,7 +15,7 @@
 - name: Debug new VMID and Name
   ansible.builtin.debug:
     msg: >
-      "Creating from cloned VMID {{ selected_template_vmid }} with new vm with ID {{ vm_to_clone.vmid
+      "Creating from cloned VMID {{ vm_selected_template_vmid | default(selected_template_vmid) }} with new vm with ID {{ vm_to_clone.vmid
       | default('Automatically assigned by Proxmox') }} and name {{ vm_to_clone.name }}.{{ vm_to_clone.domain_name
       | default(pvmt_default_domain_name) }} on node {{ vm_target_node }} on storage {{ best_storage.storage }} and pool {{
       vm_to_clone.proxmox_pool
@@ -28,7 +28,7 @@
     api_token_secret: "{{ proxmox_api_token_secret }}"
     api_host: "{{ proxmox_api_host }}"
     node: "{{ vm_to_clone.node | default(vm_target_node) }}"
-    vmid: "{{ selected_template_vmid }}"
+    vmid: "{{ vm_selected_template_vmid | default(selected_template_vmid) }}"
     newid: "{{ vm_to_clone.vmid | default(omit) }}"
     name: "{{ vm_to_clone.name }}.{{ vm_to_clone.domain_name | default(pvmt_default_domain_name) }}"
     clone: true
@@ -36,14 +36,14 @@
     full: true
     storage: "{{ best_storage.storage }}"
     # This is for the cloud init section, will be completed after fixing other issues
-    #    cicustom: >-
-    #      {{
-    #        ('vendor=' + proxmox_cloud_init_storage_path + vm_to_clone.vmid + '.yaml'
-    #        if custom_cloud_init_behavior == 'append'
-    #        else proxmox_cloud_init_storage_path + vm_to_clone.vmid + '.yaml')
-    #        if include_custom_cloud_init == 'yes'
-    #        else omit
-    #      }}
+    #   cicustom: >-
+    #     {{
+    #       ('vendor=' + proxmox_cloud_init_storage_path + vm_to_clone.vmid + '.yaml'
+    #       if custom_cloud_init_behavior == 'append'
+    #       else proxmox_cloud_init_storage_path + vm_to_clone.vmid + '.yaml')
+    #       if include_custom_cloud_init == 'yes'
+    #       else omit
+    #     }}
     timeout: "{{ pvmt_default_proxmox_api_timeout | default('360') }}"    # Extended timeout to accommodate longer clone operations
 
   register: clone_results

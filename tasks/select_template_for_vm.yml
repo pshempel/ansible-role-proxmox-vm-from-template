@@ -1,0 +1,22 @@
+---
+# tasks/select_template_for_vm.yml
+# This task selects the template for a specific VM based on its template_tag
+- name: Select VM template based on VM's tag
+  ansible.builtin.set_fact:
+    vm_selected_template_vmid: >-
+      {{ vm_info.json.data | selectattr('template', 'equalto', 1) | selectattr('type', 'equalto', 'qemu')
+      | selectattr('tags', 'search', (vm_to_clone.template_tag | default(pvmt_default_template_tag))) | map(attribute='vmid') | first
+      | default('') }}
+    vm_template_current_node: >-
+      {{ vm_info.json.data | selectattr('template', 'equalto', 1) | selectattr('type', 'equalto', 'qemu')
+      | selectattr('tags', 'search', (vm_to_clone.template_tag | default(pvmt_default_template_tag))) | map(attribute='node') | first
+      | default('') }}
+
+- name: Debug selected template for VM
+  ansible.builtin.debug:
+    msg: |
+      VM: {{ vm_to_clone.name }}
+      Requested tag: {{ vm_to_clone.template_tag | default(pvmt_default_template_tag) }}
+      Selected template VMID: {{ vm_selected_template_vmid }}
+      Template node: {{ vm_template_current_node }}
+  when: pvmt_debug_mode_enable | default(false)

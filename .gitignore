@@ -1,0 +1,54 @@
+# CLAUDE files
+CLAUDE.md
+.claude/
+tests/
+private-docs/
+# Temporary files and outputs
+tmp/
+*.tmp
+*.log
+
+# Test data and outputs
+test-data/
+test-output/
+tests/*.retry
+tests/inventory.*
+!tests/inventory
+tests/.private-*
+tests/*-auth.yml
+tests/*-secrets.yml
+
+# Ansible
+*.retry
+.ansible/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Auth files (in case they get copied to project)
+*_auth.yml
+*_credentials.yml
+vault_pass.txt
+.vault_pass
+
+# Proxmox specific
+proxmox_token.txt
+proxmox_auth.json

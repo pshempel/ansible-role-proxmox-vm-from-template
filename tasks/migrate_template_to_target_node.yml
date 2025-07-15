@@ -22,13 +22,13 @@
 - name: Ensure template_current_node is defined
   ansible.builtin.fail:
     msg: "'template_current_node' is not defined or is empty. Ensure it's correctly set before proceeding."
-  when: template_current_node is not defined or template_current_node | trim == ""
+  when: (vm_template_current_node | default(template_current_node)) is not defined or (vm_template_current_node | default(template_current_node)) | trim == ""
 
 # trunk-ignore(checkov/CKV2_ANSIBLE_1)
 # trunk-ignore(checkov/CKV_ANSIBLE_1)
 - name: Migrate the template to the requested node
   ansible.builtin.uri:
-    url: "{{ proxmox_api_url }}/nodes/{{ template_current_node }}/qemu/{{ selected_template_vmid }}/migrate"
+    url: "{{ proxmox_api_url }}/nodes/{{ vm_template_current_node | default(template_current_node) }}/qemu/{{ vm_selected_template_vmid | default(selected_template_vmid) }}/migrate"
     method: POST
     headers:
       Authorization: PVEAPIToken={{ proxmox_api_token_id }}={{ proxmox_api_token_secret }}
@@ -41,14 +41,14 @@
     validate_certs: "{{ pvmt_default_validate_certs | default('no') }}"
   register: migration_response
   when:
-    - template_current_node != migration_target_node
+    - (vm_template_current_node | default(template_current_node)) != migration_target_node
     - migration_target_node is defined
 
 # trunk-ignore(checkov/CKV2_ANSIBLE_1)
 # trunk-ignore(checkov/CKV_ANSIBLE_1)
 - name: Wait for the template migration task to complete
   ansible.builtin.uri:
-    url: "{{ proxmox_api_url }}/nodes/{{ template_current_node }}/tasks/{{ migration_response.json.data }}/status"
+    url: "{{ proxmox_api_url }}/nodes/{{ vm_template_current_node | default(template_current_node) }}/tasks/{{ migration_response.json.data }}/status"
     method: GET
     headers:
       Authorization: PVEAPIToken={{ proxmox_api_token_id }}={{ proxmox_api_token_secret }}

@@ -3,7 +3,7 @@
 - name: Debug selected_tempalte_vmid migration_completed and template_current_node
   ansible.builtin.debug:
     msg: >
-      Template VMID for reresh is: {{ selected_template_vmid }}
+      Template VMID for reresh is: {{ vm_selected_template_vmid | default(selected_template_vmid) }}
       Migration was completed: {{ migration_completed }}
       And migration is needed: {{ needs_migration }}
   when:
@@ -31,12 +31,12 @@
 - name: Update template_current_node based on refreshed information
   ansible.builtin.set_fact:
     template_current_node:
-      "{{ (refreshed_template_info.json.data | selectattr('vmid', 'equalto', selected_template_vmid |
+      "{{ (refreshed_template_info.json.data | selectattr('vmid', 'equalto', (vm_selected_template_vmid | default(selected_template_vmid)) |
       int) | list | first).node }}"
   when:
     - needs_migration and migration_completed
     - refreshed_template_info is defined
-    - refreshed_template_info.json.data | selectattr('vmid', 'equalto', selected_template_vmid | int) | list | length > 0
+    - refreshed_template_info.json.data | selectattr('vmid', 'equalto', (vm_selected_template_vmid | default(selected_template_vmid)) | int) | list | length > 0
 ####
 - name: Debug API response for refreshed template info
   ansible.builtin.debug:
@@ -56,6 +56,6 @@
   when:
     - pvmt_debug_mode_enable
 # - name: Ensure template_current_node is defined
-#  fail:
-#    msg: "'template_current_node' is not defined or is empty. Ensure it's correctly set before proceeding."
-#  when: template_current_node is not defined or template_current_node | trim == ""
+# fail:
+#   msg: "'template_current_node' is not defined or is empty. Ensure it's correctly set before proceeding."
+# when: template_current_node is not defined or template_current_node | trim == ""

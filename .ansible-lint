@@ -1,3 +1,32 @@
+---
+# Ansible-lint configuration
+
+# Paths to exclude
+exclude_paths:
+  - .cache/
+  - .github/
+  - test/
+  - tmp/
+  - .yamllint
+  - .ansible-lint
+  - CLAUDE.md
+  - "*.md"
+  - .trunk/
+
+# Rules to skip
 skip_list:
-  - 'yaml'
-  - 'role-name'
+  - yaml[line-length]  # We handle this in yamllint
+  - name[casing]  # Allow any task name format
+  - no-changed-when  # Sometimes we know a task won't change things
+  - command-instead-of-module  # Sometimes command is necessary
+  - fqcn[action-core]  # Allow short form for builtin modules
+  - fqcn[action]  # Allow short form for common modules
+  
+# Ansible-lint specific settings
+use_default_rules: true
+offline: false
+
+# Tags to allow
+tags:
+  - skip_ansible_lint
+  - molecule-notest

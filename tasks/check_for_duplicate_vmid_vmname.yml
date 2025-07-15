@@ -13,7 +13,7 @@
   register: all_vms
   delegate_to: localhost
 
-#  Verify we are not attempting to create or update an existing VM Name
+# Verify we are not attempting to create or update an existing VM Name
 - name: Check if provided VM name exists
   ansible.builtin.set_fact:
     vmname_exists:

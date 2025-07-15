@@ -14,10 +14,10 @@
   when: ansible_facts['os_family'] == "Debian"
   delegate_to: localhost
 
-#- name: Install required Python packages on Redhat Systems
-#  ansible.builtin.apt:
-#    name:
-#      - python3-proxmoxer
-#      - python3-requests
-#    state: present
-#  when: ansible_facts['os_family'] == "RHEL"
+# - name: Install required Python packages on Redhat Systems
+# ansible.builtin.apt:
+#   name:
+#     - python3-proxmoxer
+#     - python3-requests
+#   state: present
+# when: ansible_facts['os_family'] == "RHEL"

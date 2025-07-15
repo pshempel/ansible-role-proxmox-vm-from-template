@@ -11,9 +11,9 @@
     - pvmt_debug_mode_enable
 
 # - name: Check if VM name or VMID already exists and skip if true
-#  ansible.builtin.debug:
-#    msg: "Skipping cloning for '{{ vm_data_to_clone.name }}' because it already exists."
-#  when: vmname_exists[vm_data_to_clone.name] | default(false) or vmid_exists[vm_data_to_clone.name] | default(false)
+# ansible.builtin.debug:
+#   msg: "Skipping cloning for '{{ vm_data_to_clone.name }}' because it already exists."
+# when: vmname_exists[vm_data_to_clone.name] | default(false) or vmid_exists[vm_data_to_clone.name] | default(false)
 # Initial verification to skip cloning if VM already exists
 - name: Check if VM name or VMID already exists and skip if true
   ansible.builtin.debug:
@@ -32,6 +32,11 @@
     - name: Reset migration completion flag at the start of each iteration
       ansible.builtin.set_fact:
         migration_completed: false
+
+    - name: Select template for this VM
+      ansible.builtin.include_tasks: select_template_for_vm.yml
+      vars:
+        vm_to_clone: "{{ vm_data_to_clone }}"
 
     - name: Prepare environment and gather necessary information
       ansible.builtin.include_tasks: prepare.yml

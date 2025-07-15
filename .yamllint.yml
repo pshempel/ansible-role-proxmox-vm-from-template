@@ -1,0 +1,43 @@
+---
+# YAML Lint configuration for Ansible
+extends: default
+
+rules:
+  line-length:
+    max: 120
+    level: warning
+
+  # Allow both quoted and unquoted booleans
+  truthy:
+    allowed-values: ['true', 'false', 'yes', 'no', 'True', 'False', 'YES', 'NO']
+
+  # Be more permissive with braces spacing for Jinja2
+  braces:
+    min-spaces-inside: 0
+    max-spaces-inside: 1
+
+  # Allow both single and double quotes
+  quoted-strings:
+    quote-type: any
+    required: only-when-needed
+
+  # Indentation - 2 spaces
+  indentation:
+    spaces: 2
+    indent-sequences: true
+
+  comments:
+    min-spaces-from-content: 1
+
+  # Allow multiple spaces for alignment
+  colons:
+    max-spaces-after: -1
+
+  # Key ordering is not enforced
+  key-ordering: disable
+
+# Ignore files
+ignore: |
+  .github/
+  .cache/
+  tmp/

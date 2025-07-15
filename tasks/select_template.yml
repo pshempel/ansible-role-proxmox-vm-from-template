@@ -6,7 +6,7 @@
       "{{ vm_info.json.data | selectattr('template', 'equalto', 1) | selectattr('type', 'equalto', 'qemu')
       | selectattr('tags', 'search', (template_tag | default(pvmt_default_template_tag))) | map(attribute='vmid') | first
       | default('') }}"
-    #  This task selects the desired template VMID and its current node based on a provided tag
+    # This task selects the desired template VMID and its current node based on a provided tag
     template_current_node:
       "{{ vm_info.json.data | selectattr('template', 'equalto', 1) | selectattr('type', 'equalto', 'qemu')
       | selectattr('tags', 'search', (template_tag | default(pvmt_default_template_tag))) | map(attribute='node') | first
