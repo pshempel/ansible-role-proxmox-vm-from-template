@@ -20,7 +20,7 @@ pvmt_preferred_storage_type: 'zfs'  # Preferred storage type, e.g., 'zfs', 'lvm'
 # Settings for cloud-init
 pvmt_default_cloudinit_ipv4: "dhcp"       # Default IPv4 setting
 pvmt_default_cloudinit_ipv6: "dhcp"       # Default IPv6 setting
-default_node: "pve4"       # Default Proxmox node
+pvmt_default_node: "pve4"       # Default Proxmox node (currently unused - role auto-selects based on memory)
 # This is the path on the cluster local system
 pvmt_include_custom_cloud_init: true      # This set to now will ignore all other cloud init settings
 pvmt_local_node_cloud_init_path: "/path/to/local/cloud_init_files/"
