@@ -1,4 +1,13 @@
 ---
+# defaults/main.yml for ansible-role-proxmox-vm-from-template
+#
+# Variable Naming Conventions:
+# - pvmt_* : All role configuration variables use this prefix (Proxmox VM Template)
+#           This prevents conflicts with other roles and Ansible built-ins
+# - proxmox_api_* : API connection variables (kept for compatibility, should be api_*)
+# - No prefix : Runtime/internal variables created with set_fact during execution
+# - vm_* : Per-VM runtime variables (e.g., vm_selected_template_vmid)
+#
 # Default VM configurations
 pvmt_default_memory_size: 2048         # MB
 pvmt_default_vm_balloon: "{{ vm_to_clone.memory | default(pvmt_default_memory_size) }}"  # set min memory for ballooning
