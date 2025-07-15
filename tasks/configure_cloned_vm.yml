@@ -1,5 +1,15 @@
 ---
 # tasks/configure_cloned_vm.yml
+- name: Debug VM configuration values being used
+  ansible.builtin.debug:
+    msg: |
+      VM: {{ vm_to_clone.name }}
+      Memory: {{ vm_to_clone.memory | default(pvmt_default_memory_size) }} (from: {{ 'vm config' if vm_to_clone.memory is defined else 'pvmt_default_memory_size' }})
+      CPU cores: {{ vm_to_clone.cores | default(pvmt_default_cpu_cores) }} (from: {{ 'vm config' if vm_to_clone.cores is defined else 'pvmt_default_cpu_cores' }})
+      Boot on start: {{ vm_to_clone.boot_on_start | default(pvmt_default_boot_on_start) }} (from: {{ 'vm config' if vm_to_clone.boot_on_start is defined else 'pvmt_default_boot_on_start' }})
+      VM agent: {{ vm_to_clone.vm_agent | default(pvmt_default_vm_agent) }} (from: {{ 'vm config' if vm_to_clone.vm_agent is defined else 'pvmt_default_vm_agent' }})
+  when: pvmt_debug_mode_enable | default(false) | bool
+
 - name: Configure network settings and modify storage and memory for deployed VMs
   community.general.proxmox_kvm:
     api_user: "{{ proxmox_api_token_id.split('!')[0] }}"

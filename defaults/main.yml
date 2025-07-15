@@ -8,6 +8,23 @@
 # - No prefix : Runtime/internal variables created with set_fact during execution
 # - vm_* : Per-VM runtime variables (e.g., vm_selected_template_vmid)
 #
+# Variable Override Hierarchy:
+# 1. Per-VM settings in 'vms' list (highest priority)
+#    Example: vms[0].memory, vms[0].vm_start_now
+# 2. Playbook-level pvmt_default_* overrides
+#    Example: Set pvmt_default_vm_start_now: "yes" to change default for all VMs
+# 3. Role defaults in this file (lowest priority)
+#
+# Per-VM Variable Names:
+# When setting values for individual VMs, use the short form without pvmt_default_ prefix:
+#   - memory (not pvmt_default_memory_size)
+#   - disk_size (not pvmt_default_disk_size)
+#   - vm_start_now (not pvmt_default_vm_start_now)
+#   - boot_on_start (not pvmt_default_boot_on_start)
+#   - vm_agent (not pvmt_default_vm_agent)
+#   - cores (not pvmt_default_cpu_cores)
+#   - sockets (not pvmt_default_cpu_sockets)
+#
 # Default VM configurations
 pvmt_default_memory_size: 2048         # MB
 pvmt_default_vm_balloon: "{{ vm_to_clone.memory | default(pvmt_default_memory_size) }}"  # set min memory for ballooning
