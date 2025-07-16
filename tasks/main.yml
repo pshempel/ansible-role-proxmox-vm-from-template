@@ -23,6 +23,11 @@
   vars:
     template_tag: "{{ pvmt_default_template_tag }}"
 
+# Validate all VM template tags exist before proceeding
+- name: Validate all VM template tags exist
+  ansible.builtin.import_tasks: validate_vm_template_tags.yml
+  when: vms is defined and vms | length > 0
+
 # Verify when we are passed a VMID that it does not already exist
 - name: Check for Duplicate VMID when provided from playbook
   ansible.builtin.include_tasks: check_for_duplicate_vmid_vmname.yml

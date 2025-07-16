@@ -1,0 +1,29 @@
+---
+# tasks/validate_vm_template_tags.yml
+# Validates that all requested template tags exist before starting the cloning process
+
+- name: Get all unique template tags from VMs
+  ansible.builtin.set_fact:
+    requested_template_tags: >-
+      {{ vms | map(attribute='template_tag', default=pvmt_default_template_tag) | unique | list }}
+
+- name: Debug requested template tags
+  ansible.builtin.debug:
+    msg: "Requested template tags: {{ requested_template_tags }}"
+  when: pvmt_debug_mode_enable | default(false)
+
+- name: Validate each requested template tag exists
+  ansible.builtin.assert:
+    that:
+      - >-
+        vm_info.json.data |
+        json_query("[?type=='qemu' && template==`1` && tags.contains(@, `" + item + "`)]") |
+        length > 0
+    fail_msg: "Template with tag '{{ item }}' does not exist in the Proxmox cluster."
+    success_msg: "Template with tag '{{ item }}' found."
+  loop: "{{ requested_template_tags }}"
+
+- name: Debug template validation results
+  ansible.builtin.debug:
+    msg: "All requested template tags have been validated successfully."
+  when: pvmt_debug_mode_enable | default(false)

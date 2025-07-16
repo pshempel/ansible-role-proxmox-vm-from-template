@@ -38,6 +38,12 @@ vms:
 ### Fallback Behavior
 If a VM doesn't specify a `template_tag`, it uses `pvmt_default_template_tag` (default: "bookworm")
 
+### Template Tag Validation
+The role validates all requested template tags before starting any VM operations:
+- All unique template tags from the VMs list are checked for existence
+- If any template tag is missing, the role fails with a clear error message
+- This prevents partial deployments where some VMs succeed and others fail
+
 ## Requirements
 
 - Ansible 2.9 or higher.
