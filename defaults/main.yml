@@ -47,7 +47,7 @@ pvmt_default_vm_agent: "yes"            # Enable agent on vm
 pvmt_default_boot_on_start: true        # Boot VM on start of Proxmox
 pvmt_default_vm_start_now: "no"
 pvmt_default_validate_certs: "true"
-pvmt_default_proxmox_api_timeout: 120  # Defaults to 360 seconds if not set
+pvmt_default_proxmox_api_timeout: 120  # Timeout for clone operations (other operations have built-in retries)
 pvmt_default_vm_network_vlan: 0        # Default VLAN tag # Zero is empty
 pvmt_default_domain_name: "your-default-doman.com"
 pvmt_default_proxmox_bridge: "vmbr0"

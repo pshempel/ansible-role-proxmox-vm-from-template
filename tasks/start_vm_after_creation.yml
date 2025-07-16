@@ -21,6 +21,10 @@
         node: "{{ vm_target_node }}"
         vmid: "{{ clone_results.vmid }}"
         state: started
+      retries: 3
+      delay: 5
+      register: start_result
+      until: start_result is not failed
 
     # Check the VM state
     - name: Start VM

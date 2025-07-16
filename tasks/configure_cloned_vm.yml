@@ -27,6 +27,10 @@
     balloon: "{{ vm_to_clone.vm_balloon | default(pvmt_default_vm_balloon) }}"
     update: true
   when: vm_to_clone.state | default('present') == 'present'
+  retries: 3
+  delay: 5
+  register: kvm_update_result
+  until: kvm_update_result is not failed
 
 # Discover disk devices if we need to resize
 - name: Discover VM disk devices
@@ -60,6 +64,10 @@
   when:
     - vm_to_clone.state | default('present') == 'present'
     - (pvmt_default_disk_size is defined or vm_to_clone.disk_size is defined)
+  retries: 3
+  delay: 5
+  register: disk_resize_result
+  until: disk_resize_result is not failed
 
 # Update VM network settings using proxmox_nic
 - name: Update VM network settings
@@ -77,3 +85,7 @@
   when:
     - vm_to_clone.state | default('present') == 'present'
     - (pvmt_default_vm_network_vlan | default(0) | int > 0) or (vm_to_clone.vm_network_vlan | default(0) | int > 0)
+  retries: 3
+  delay: 10
+  register: nic_result
+  until: nic_result is not failed
